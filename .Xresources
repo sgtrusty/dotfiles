@@ -1,0 +1,78 @@
+!
+! Generated with :
+! XRDB2Xreources.py
+!
+*.foreground:  #00ff00
+*.background:  #231a22
+*.cursorColor: #23ff18
+!
+! Black
+*.color0:      #000000
+*.color8:      #888888
+!
+! Red
+*.color1:      #990000
+*.color9:      #e50000
+!
+! Green
+*.color2:      #00a600
+*.color10:     #00d900
+!
+! Yellow
+*.color3:      #999900
+*.color11:     #e5e500
+!
+! Blue
+*.color4:      #0000b2
+*.color12:     #00b286
+!
+! Magenta
+*.color5:      #b200b2
+*.color13:     #e500e5
+!
+! Cyan
+*.color6:      #00a6b2
+*.color14:     #00e5e5
+!
+! White
+*.color7:      #bfbfbf
+*.color15:     #e5e5e5
+!
+! Bold, Italic, Underline
+*.colorBD:     #00ff00
+!*.colorIT:
+!*.colorUL:
+
+! xterm*visualBell: true
+xterm*faceName: DejaVu Sans Mono 
+xterm*faceSize: 14
+
+xterm*selectToClipboard: true
+! Set up scrollbars - get them, get them on the right side, and be
+! able to scroll them with the right,left, or middle mouse button
+xterm*ScrollBar: on
+*XTerm*scrollBar: true
+xterm*rightScrollBar: true
+xterm*multiScroll: on
+xterm*jumpScroll: on
+
+!xterm*scrollbar.Translations: #override \n\
+!  :StartScroll(Continous) MoveThumb() NotifyThumb()\n\
+!  :MoveThumb() NotifyThumb() \n\
+!  :StartScroll(Continous) MoveThumb() NotifyThumb()\n\
+!  :MoveThumb() NotifyThumb() \n\
+!  :StartScroll(Continous) MoveThumb() NotifyThumb()\n\
+!  :MoveThumb() NotifyThumb() \n\
+!  :NotifyScroll(Proportional) EndScroll()
+
+!XTerm*VT100.translations: #override <Btn2Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)
+*VT100.Translations: #override \
+                    Shift <Key>Up:              scroll-back(1) \n\
+                    Shift <Key>Down:            scroll-forw(1) \n\
+                    <Btn3Down>:                   insert-selection(CLIPBOARD)
+!                    ~Meta Shift Ctrl <Key>V:    insert-selection(CLIPBOARD) \n\
+!                     Meta Shift Ctrl <Key>V:    insert-selection(PRIMARY) \n\
+!                    ~Shift <Btn1Up>:            select-end(PRIMARY, CUT_BUFFER0) \n\
+!                     Shift <Btn1Up>:            select-end(CLIPBOARD, CUT_BUFFER1) \n\
+!                    ~Shift ~Ctrl ~Meta <Btn2Up>:insert-selection(PRIMARY, CUT_BUFFER0) \n\
+!                     Shift ~Ctrl ~Meta <Btn2Up>:insert-selection(CLIPBOARD, CUT_BUFFER1)
