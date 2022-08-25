@@ -428,10 +428,7 @@ myDynamicHook = composeAll . concat $
         [checkDock                   --> doLower]
         -- className =? "smplayer"       --> doFloat,
       , [className =? "smplayer"       --> hasBorder False]
-      , [className =? "Gimp"           --> doFloat]
-      , [className =? "tint2"           --> doFloat]
-      , [resource  =? "desktop_window" --> doIgnore]
-      , [resource  =? "kdesktop"       --> doIgnore]
+	    , [resource  =? r -?> doIgnore | r <- myIgnoreResources]
       , [isFullscreen --> hasBorder False]
       , [isFullscreen --> doFullFloat]
       , [className =? "firefox" --> doShift "\63288"]
@@ -448,9 +445,8 @@ myDynamicHook = composeAll . concat $
       -- , floating --> doF W.shiftMaster
     ]
     where
-        myFloatClasses = ["Downloads", "Gxmessage", "MPlayer", "Nm-connection-editor"
-                         , "Smplayer", "VirtualBox", "XFontSel", "Xmessage"]
-        myIgnoreResources = ["desktop", "desktop_window", "notify-osd", "stalonetray", "trayer"]
+        myFloatClasses = ["Gimp", "tint2"]
+        myIgnoreResources = ["desktop", "kdesktop", "desktop_window", "notify-osd", "stalonetray", "trayer"]
         viewShift = doF . liftM2 (.) W.greedyView W.shift
 
 -- Avoid changing master on new window creation
