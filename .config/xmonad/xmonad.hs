@@ -21,9 +21,8 @@ import XMonad.Util.Ungrab
 import XMonad.Hooks.EwmhDesktops ( ewmh )
 import XMonad.Hooks.ManageDocks
     ( checkDock, avoidStruts, docks, manageDocks, Direction2D(D, L, R, U) )
-import XMonad.Hooks.ManageHelpers ( doFullFloat, isFullscreen, doLower )
+import XMonad.Hooks.ManageHelpers ( composeOne, doFullFloat, isFullscreen, doLower )
 import XMonad.Hooks.RefocusLast ( isFloat)
-
 
 import XMonad.Layout.Accordion (Accordion(Accordion))
 import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
@@ -43,7 +42,8 @@ import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Spacing ( spacingRaw, Border(Border) )
 import XMonad.Layout.Renamed (renamed, Rename(Replace))
 
-import Control.Monad ( join, when, liftM )
+import Control.Arrow (first)
+import Control.Monad ( join, when, liftM, liftM2 )
 import Data.Monoid
 import Data.Maybe ( maybeToList, isJust )
 import Data.List (isSuffixOf)
@@ -71,6 +71,18 @@ toggleFull = withFocused (\windowId -> do
         if windowId `M.member` floats
         then withFocused $ windows . W.sink
         else withFocused $ windows . flip W.float (W.RationalRect 0 0 1 1) })
+
+toggleFloatFull :: X()
+toggleFloatFull = do
+  windows (\windowset ->
+               let window = W.peek windowset
+                   rect =  W.RationalRect 0 0 1 1
+               in case window of
+                    Just w -> if M.member w $ W.floating windowset
+                              then W.sink w windowset
+                              else W.float w rect windowset
+                    Nothing -> windowset)
+  withFocused (\w -> withDisplay (\d -> io $ raiseWindow d w))
 
 -- I'd like to have a setup where I have a short list of layouts that can be toggled with the usual "meta+space" combo,
 -- but then have a keybingding that allows me to select from a larger range of configured layouts with dmenu.
@@ -231,14 +243,15 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- https://www.reddit.com/r/xmonad/comments/npdtxs/toggle_full_screen_in_xmonad/
     -- , ((modm,               xK_f     ), toggleFull)
+    , ((modm,               xK_f     ), toggleFloatFull)
     --, ((modm,               xK_f     ), withFocused (sendMessage . maximizeRestore))
-    , ((modm,               xK_f     ), cycleAction "cycleFullscreen" [
+    , ((modm .|. shiftMask,               xK_f     ), cycleAction "cycleFullscreen" [
       do
         windows W.swapMaster
-        sendMessage $ setGaps [(L,0), (R,0), (U,0), (D,0)]
+        -- sendMessage $ setGaps [(L,0), (R,0), (U,0), (D,0)]
         sendMessage $ JumpToLayout "Full",
       do
-        sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]
+        -- sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]
         sendMessage $ JumpToLayout "Tiled"
     ])
 
@@ -408,19 +421,43 @@ laySels = [ (s, sendMessage $ JumpToLayout s) | s <- l ]
 -- To match on the WM_NAME, you can use 'title' in the same way that
 -- 'className' and 'resource' are used below.
 --
-myManageHook = fullscreenManageHook <+> manageDocks <+> composeAll
+myManageHook = fullscreenManageHook <+> manageDocks <+> myDynamicHook
+
+myDynamicHook = composeAll . concat $
     [ 
-      checkDock                   --> doLower
-      -- className =? "smplayer"       --> doFloat,
-    , className =? "smplayer"       --> hasBorder False
-    , className =? "Gimp"           --> doFloat
-    , className =? "tint2"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore
-    , isFullscreen --> hasBorder False
-    , isFullscreen --> doFullFloat
-    -- , floating --> doF W.shiftMaster
-                                 ]
+        [checkDock                   --> doLower]
+        -- className =? "smplayer"       --> doFloat,
+      , [className =? "smplayer"       --> hasBorder False]
+      , [className =? "Gimp"           --> doFloat]
+      , [className =? "tint2"           --> doFloat]
+      , [resource  =? "desktop_window" --> doIgnore]
+      , [resource  =? "kdesktop"       --> doIgnore]
+      , [isFullscreen --> hasBorder False]
+      , [isFullscreen --> doFullFloat]
+      , [className =? "firefox" --> doShift "\63288"]
+      , [className =? "Nemo" --> viewShift "\63306"]
+    -- Don't spawn new windows in the master pane (which is at the top of the
+    -- screen). Thanks to dschoepe, aavogt and especially vav in #xmonad on
+    -- Freenode (2009-06-30 02:10f CEST).
+      , [return True =? True --> doF avoidMaster]
+      -- Prevent windows which get moved to other workspaces from removing the
+      -- focus of the currently selected window. Thanks to vav in #xmonad on
+      -- Freenode (2010-04-15 21:04 CEST).
+      -- , [return True =? True --> doF W.focusDown]
+      -- , isFloat      --> ask >>= \w -> liftX (withDisplay $ \d -> io (lowerWindow d w)) <+> idHook
+      -- , floating --> doF W.shiftMaster
+    ]
+    where
+        myFloatClasses = ["Downloads", "Gxmessage", "MPlayer", "Nm-connection-editor"
+                         , "Smplayer", "VirtualBox", "XFontSel", "Xmessage"]
+        myIgnoreResources = ["desktop", "desktop_window", "notify-osd", "stalonetray", "trayer"]
+        viewShift = doF . liftM2 (.) W.greedyView W.shift
+
+-- Avoid changing master on new window creation
+avoidMaster :: W.StackSet i l a s sd -> W.StackSet i l a s sd
+avoidMaster = W.modify' $ \c -> case c of
+    W.Stack t [] (r:rs) -> W.Stack t [r] rs
+    otherwise           -> c
 
 ------------------------------------------------------------------------
 -- Event handling
