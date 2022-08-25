@@ -13,9 +13,10 @@ import XMonad.Actions.Submap
 
 import XMonad.ManageHook ( liftX )
 
+import XMonad.Util.ActionCycle
+import XMonad.Util.Run ( runProcessWithInput )
 import XMonad.Util.SpawnOnce ( spawnOnce )
 import XMonad.Util.Ungrab
-import XMonad.Util.Run ( runProcessWithInput )
 
 import XMonad.Hooks.EwmhDesktops ( ewmh )
 import XMonad.Hooks.ManageDocks
@@ -187,12 +188,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch rofi and dashboard
     , ((modm,               xK_period), spawn "rofimoji")
     , ((modm,               xK_o     ), rofiLauncher)
-    , ((modm,               xK_p     ), centerlaunch)
-    , ((modm .|. shiftMask, xK_p     ), ewwclose)
-
+    -- launch eww centerbar
+    , ((modm,               xK_p     ), cycleAction "centerlaunch" [centerlaunch, ewwclose])
     -- launch eww sidebar
-    , ((modm,               xK_s     ), sidebarlaunch)
-    , ((modm .|. shiftMask, xK_s     ), ewwclose)
+    , ((modm,               xK_s     ), cycleAction "sidebarlaunch" [sidebarlaunch, ewwclose])
 
     -- My Stuff
     , ((modm,               xK_b     ), spawn "exec ~/.config/xmonad/scripts/bartoggle")
@@ -232,10 +231,14 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- https://www.reddit.com/r/xmonad/comments/npdtxs/toggle_full_screen_in_xmonad/
     -- , ((modm,               xK_f     ), toggleFull)
     --, ((modm,               xK_f     ), withFocused (sendMessage . maximizeRestore))
-    , ((modm,               xK_f     ), do
-        sendMessage $ ToggleGaps
-        sendMessage $ JumpToLayout "Full"
-        )
+    , ((modm,               xK_f     ), cycleAction "cycleFullscreen" [
+      do
+        sendMessage $ setGaps [(L,0), (R,0), (U,0), (D,0)]
+        sendMessage $ JumpToLayout "Full",
+      do
+        sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,60)]
+        sendMessage $ JumpToLayout "Tiled"
+    ])
 
     --  Reset the layouts on the current workspace to default
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
@@ -320,12 +323,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 --
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 
-    -- mod-button1, Set the window to floating mode and move by dragging
-    [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
-                                       >> windows W.shiftMaster))
 
-    -- mod-button2, Raise the window to the top of the stack
-    , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
+    -- mod-button1, Raise the window to the top of the stack
+    [ ((modm, button1), (\w -> focus w >> windows W.shiftMaster))
+
+    -- mod-button2, Set the window to floating mode and move by dragging
+    , ((modm, button2), (\w -> focus w >> mouseMoveWindow w
+                                       >> windows W.shiftMaster))
 
     -- mod-button3, Set the window to floating mode and resize by dragging
     , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
