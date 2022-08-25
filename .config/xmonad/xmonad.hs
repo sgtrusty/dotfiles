@@ -428,16 +428,18 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> composeAll
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = mempty
+-- myEventHook = mempty
 -- https://stackoverflow.com/questions/23314584/xmonad-focus-hook
--- myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
---         | t == enterNotify = do
---                    focus win >> windows W.shiftMaster
---                    return (All True)
---         | t == leaveNotify = do
---                   --  updatePointer (0.5, 0.5) (0, 0)
---                    return (All True)
---         | otherwise = return $ All True
+myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
+        | t == enterNotify = do
+                   focus win >> windows W.shiftMaster
+                   sendMessage $ JumpToLayout "Full"
+                   return (All True)
+        | t == leaveNotify = do
+                   sendMessage $ JumpToLayout "Circle"
+                  --  updatePointer (0.5, 0.5) (0, 0)
+                   return (All True)
+        | otherwise = return $ All True
 
 
 ------------------------------------------------------------------------
