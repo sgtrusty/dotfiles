@@ -20,9 +20,10 @@ import XMonad.Util.Ungrab
 
 import XMonad.Hooks.EwmhDesktops ( ewmh )
 import XMonad.Hooks.ManageDocks
-    ( avoidStruts, docks, manageDocks, Direction2D(D, L, R, U) )
-import XMonad.Hooks.ManageHelpers ( doFullFloat, isFullscreen )
+    ( checkDock, avoidStruts, docks, manageDocks, Direction2D(D, L, R, U) )
+import XMonad.Hooks.ManageHelpers ( doFullFloat, isFullscreen, doLower )
 import XMonad.Hooks.RefocusLast ( isFloat)
+
 
 import XMonad.Layout.Accordion (Accordion(Accordion))
 import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
@@ -233,11 +234,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     --, ((modm,               xK_f     ), withFocused (sendMessage . maximizeRestore))
     , ((modm,               xK_f     ), cycleAction "cycleFullscreen" [
       do
+        windows W.swapMaster
         sendMessage $ setGaps [(L,0), (R,0), (U,0), (D,0)]
         sendMessage $ JumpToLayout "Full",
       do
         sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,60)]
-        sendMessage $ JumpToLayout "Tiled"
+        sendMessage $ JumpToLayout "Circle"
     ])
 
     --  Reset the layouts on the current workspace to default
@@ -355,7 +357,7 @@ myLayout = avoidStruts (
         ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTileMirrored )
         ||| renamed [Replace "Acordion"] ( smartBorders . maximize . minimize . boringWindows $ Accordion )
         ||| renamed [Replace "Simple"]   ( smartBorders . maximize . minimize . boringWindows $  simpleFloat )
-        ||| renamed [Replace "Circle"]     ( noBorders . maximize . minimize . boringWindows $ Circle )
+        ||| renamed [Replace "Circle"]     ( smartBorders . maximize . minimize . boringWindows $ Circle )
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )
@@ -408,8 +410,9 @@ laySels = [ (s, sendMessage $ JumpToLayout s) | s <- l ]
 --
 myManageHook = fullscreenManageHook <+> manageDocks <+> composeAll
     [ 
+      checkDock                   --> doLower
       -- className =? "smplayer"       --> doFloat,
-      className =? "smplayer"       --> hasBorder False
+    , className =? "smplayer"       --> hasBorder False
     , className =? "Gimp"           --> doFloat
     , className =? "tint2"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
@@ -428,18 +431,19 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> composeAll
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
--- myEventHook = mempty
+myEventHook = mempty
 -- https://stackoverflow.com/questions/23314584/xmonad-focus-hook
-myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
-        | t == enterNotify = do
-                   focus win >> windows W.shiftMaster
-                   sendMessage $ JumpToLayout "Full"
-                   return (All True)
-        | t == leaveNotify = do
-                   sendMessage $ JumpToLayout "Circle"
-                  --  updatePointer (0.5, 0.5) (0, 0)
-                   return (All True)
-        | otherwise = return $ All True
+-- myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
+--         | t == enterNotify = do
+--                   --  focus win >> windows W.shiftMaster
+--                    focus win
+--                    sendMessage $ JumpToLayout "Full"
+--                    return (All True)
+--         | t == leaveNotify = do
+--                    sendMessage $ JumpToLayout "Circle"
+--                   --  updatePointer (0.5, 0.5) (0, 0)
+--                    return (All True)
+--         | otherwise = return $ All True
 
 
 ------------------------------------------------------------------------
