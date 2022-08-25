@@ -131,7 +131,34 @@ myModMask       = mod4Mask
 --
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
-myWorkspaces    = ["\63083", "\63288", "\63306", "\61723", "\63107", "\63601", "\63391", "\61713", "\61884"]
+
+wsCode :: String
+wsCode = "\63083"
+
+wsInternet :: String
+wsInternet = "\63288"
+
+wsExplorer :: String
+wsExplorer = "\63306"
+
+wsGames :: String
+wsGames = "\61723"
+
+wsChat :: String
+wsChat = "\63107"
+
+wsMisc1 :: String
+wsMisc1 = "\63601"
+
+wsMisc2 :: String
+wsMisc2 = "\63391"
+
+wsMisc3 :: String
+wsMisc3 = "\61713"
+
+wsMusic :: String
+wsMusic = "\61884"
+myWorkspaces    = [wsCode, wsInternet, wsExplorer, wsGames, wsChat, wsMisc1, wsMisc2, wsMisc3, wsMusic]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
@@ -432,8 +459,8 @@ myDynamicHook = composeAll . concat $
       , [className =? c --> doFloat | c <- myFloatClasses]
 	    , [resource  =? r --> doIgnore | r <- myIgnoreResources]
       , [className =? "smplayer"       --> hasBorder False]
-      , [className =? "firefox" --> doShift "\63288"]
-      , [className =? "Nemo" --> viewShift "\63306"]
+      , [viewShiftClasses]
+      , [shiftClasses]
     -- Don't spawn new windows in the master pane (which is at the top of the
     -- screen). Thanks to dschoepe, aavogt and especially vav in #xmonad on
     -- Freenode (2009-06-30 02:10f CEST).
@@ -442,19 +469,53 @@ myDynamicHook = composeAll . concat $
       -- focus of the currently selected window. Thanks to vav in #xmonad on
       -- Freenode (2010-04-15 21:04 CEST).
       -- , [return True =? True --> doF W.focusDown]
-      -- , isFloat      --> ask >>= \w -> liftX (withDisplay $ \d -> io (lowerWindow d w)) <+> idHook
+
+      -- , [className =? "Alacritty" --> windowActionHook (windowAction lowerWindow)]
+      -- , [isFloat =? True --> ask >>= \w -> liftX (withDisplay $ \d -> io (lowerWindow d w)) <+> idHook]
       -- , floating --> doF W.shiftMaster
     ]
     where
         myFloatClasses = ["Gimp-2.10", "tint2"]
         myIgnoreResources = ["desktop", "kdesktop", "desktop_window", "notify-osd", "stalonetray", "trayer"]
-        viewShift = doF . liftM2 (.) W.greedyView W.shift
+        windowAction a w = withDisplay $ \d -> io $ a d w
+        windowActionHook a = ask >>= \w -> liftX (a w) >> idHook
 
+
+viewShift = doF . liftM2 (.) W.greedyView W.shift
 -- Avoid changing master on new window creation
 avoidMaster :: W.StackSet i l a s sd -> W.StackSet i l a s sd
 avoidMaster = W.modify' $ \c -> case c of
     W.Stack t [] (r:rs) -> W.Stack t [r] rs
     otherwise           -> c
+
+viewShiftClasses ::
+  ManageHook
+viewShiftClasses =
+  composeAll $
+    (\(c, w) -> className =? c --> viewShift w)
+    `fmap`
+    [
+      ("Nemo", wsExplorer)
+    ]
+
+shiftClasses ::
+  ManageHook
+shiftClasses =
+  composeAll $
+    (\(c, w) -> className =? c --> doShift w)
+    `fmap`
+    [
+      ("firefox", wsInternet)
+    -- , ("Xchat"      , ws8)
+    -- , ("Skype"      , ws8)
+    -- , ("Gwibber"    , ws8)
+    -- , ("Music"      , ws9)
+    -- , ("Rhythmbox"  , ws9)
+    -- , ("Banshee"    , ws9)
+    -- , ("banshee"    , ws9)
+    -- , ("banshee-1"  , ws9)
+    ]
+
 
 ------------------------------------------------------------------------
 -- Event handling
