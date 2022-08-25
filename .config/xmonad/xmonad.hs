@@ -9,6 +9,7 @@
 import XMonad
 
 import XMonad.Actions.UpdatePointer ( updatePointer )
+import XMonad.Actions.Submap
 
 import XMonad.ManageHook ( liftX )
 
