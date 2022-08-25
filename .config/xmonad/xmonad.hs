@@ -155,9 +155,26 @@ rofiLauncher = spawn "rofi -no-lazy-grab -show drun -modi run,drun,window -theme
 
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
+    [ 
+    -- native keys
+    -- Audio keys
+      ((0,                    xF86XK_AudioPlay), spawn "playerctl play-pause")
+    , ((0,                    xF86XK_AudioPrev), spawn "playerctl previous")
+    , ((0,                    xF86XK_AudioNext), spawn "playerctl next")
+    , ((0,                    xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume 0 +5%")
+    , ((0,                    xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume 0 -5%")
+    , ((0,                    xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
+
+    -- Brightness keys
+    , ((0,                    xF86XK_MonBrightnessUp), spawn "brightnessctl s +10%")
+    , ((0,                    xF86XK_MonBrightnessDown), spawn "brightnessctl s 10-%")
 
     -- launch a terminal
-    [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
+    , ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
+ 
+    -- Screenshot
+    , ((0,                    xK_Print), maimcopy)
+    , ((modm,                 xK_Print), maimsave)
 
     -- , ((0, xK_Super_L), submap . M.fromList $
     --   [ ((0, xK_e),    submap . M.fromList $
@@ -176,22 +193,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch eww sidebar
     , ((modm,               xK_s     ), sidebarlaunch)
     , ((modm .|. shiftMask, xK_s     ), ewwclose)
-
-    -- Audio keys
-    , ((0,                    xF86XK_AudioPlay), spawn "playerctl play-pause")
-    , ((0,                    xF86XK_AudioPrev), spawn "playerctl previous")
-    , ((0,                    xF86XK_AudioNext), spawn "playerctl next")
-    , ((0,                    xF86XK_AudioRaiseVolume), spawn "pactl set-sink-volume 0 +5%")
-    , ((0,                    xF86XK_AudioLowerVolume), spawn "pactl set-sink-volume 0 -5%")
-    , ((0,                    xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
-
-    -- Brightness keys
-    , ((0,                    xF86XK_MonBrightnessUp), spawn "brightnessctl s +10%")
-    , ((0,                    xF86XK_MonBrightnessDown), spawn "brightnessctl s 10-%")
- 
-    -- Screenshot
-    , ((0,                    xK_Print), maimcopy)
-    , ((modm,                 xK_Print), maimsave)
 
     -- My Stuff
     , ((modm,               xK_b     ), spawn "exec ~/.config/xmonad/scripts/bartoggle")
@@ -225,8 +226,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_i), sendMessage ExpandSlave) -- %! Expand a slave area
 
      -- Rotate through the available layout algorithms
-    -- , ((modm,               xK_space ), sendMessage NextLayout)
     , ((modm,               xK_space ), runSelectedAction "layout" laySels)
+    , ((modm .|. controlMask, xK_space ), sendMessage NextLayout)
 
     -- https://www.reddit.com/r/xmonad/comments/npdtxs/toggle_full_screen_in_xmonad/
     -- , ((modm,               xK_f     ), toggleFull)
@@ -406,6 +407,7 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> composeAll
       -- className =? "smplayer"       --> doFloat,
       className =? "smplayer"       --> hasBorder False
     , className =? "Gimp"           --> doFloat
+    , className =? "tint2"           --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore
     , isFullscreen --> hasBorder False
