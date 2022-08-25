@@ -35,13 +35,13 @@ border_color_pressed = #000000 100
 # Panel
 panel_items = T
 panel_size = 30% 36
-panel_margin = 0 2
+panel_margin = 4 2
 panel_padding = 0 0 0
 panel_background_id = 1
 wm_menu = 1
 panel_dock = 1
 panel_pivot_struts = 0
-panel_position = top center horizontal
+panel_position = bottom left horizontal
 panel_layer = normal
 panel_monitor = all
 panel_shrink = 0

@@ -61,13 +61,13 @@ border_color_pressed = #000000 100
 # Panel
 panel_items = LTSBC
 panel_size = 66% 45
-panel_margin = 440 8
+panel_margin = 2 2
 panel_padding = 12 6 8
 panel_background_id = 4
 wm_menu = 1
 panel_dock = 1
 panel_pivot_struts = 0
-panel_position = bottom center horizontal
+panel_position = bottom right horizontal
 panel_layer = normal
 panel_monitor = all
 panel_shrink = 0

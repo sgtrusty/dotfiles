@@ -72,35 +72,70 @@ mouse_pressed_icon_asb = 100 0 0
 scale_relative_to_dpi = 0
 scale_relative_to_screen_height = 0
 
+
 #-------------------------------------
 # Separator 1
 separator = new
 separator_background_id = 0
-separator_color = #000000 0
+separator_color = #777777 80
 separator_style = empty
-separator_size = 10
+separator_size = 1
 separator_padding = 1 0
+
+#-------------------------------------
 # Separator 2
 separator = new
 separator_background_id = 0
-separator_color = #000000 0
+separator_color = #777777 80
 separator_style = empty
-separator_size = 10
+separator_size = 1
 separator_padding = 1 0
+
+#-------------------------------------
 # Separator 3
 separator = new
 separator_background_id = 0
-separator_color = #000000 0
-separator_style = empty
-separator_size = 10
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
 separator_padding = 1 0
+
+#-------------------------------------
 # Separator 4
 separator = new
 separator_background_id = 0
-separator_color = #000000 0
-separator_style = empty
-separator_size = 10
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
 separator_padding = 1 0
+
+#-------------------------------------
+# Separator 5
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 6
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 7
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
+
 
 #-------------------------------------
 # Button 1
