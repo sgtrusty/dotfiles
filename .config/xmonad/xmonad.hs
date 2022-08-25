@@ -426,11 +426,12 @@ myManageHook = fullscreenManageHook <+> manageDocks <+> myDynamicHook
 myDynamicHook = composeAll . concat $
     [ 
         [checkDock                   --> doLower]
-        -- className =? "smplayer"       --> doFloat,
-      , [className =? "smplayer"       --> hasBorder False]
-	    , [resource  =? r -?> doIgnore | r <- myIgnoreResources]
       , [isFullscreen --> hasBorder False]
       , [isFullscreen --> doFullFloat]
+        -- className =? "smplayer"       --> doFloat,
+      , [className =? c --> doFloat | c <- myFloatClasses]
+	    , [resource  =? r --> doIgnore | r <- myIgnoreResources]
+      , [className =? "smplayer"       --> hasBorder False]
       , [className =? "firefox" --> doShift "\63288"]
       , [className =? "Nemo" --> viewShift "\63306"]
     -- Don't spawn new windows in the master pane (which is at the top of the
@@ -445,7 +446,7 @@ myDynamicHook = composeAll . concat $
       -- , floating --> doF W.shiftMaster
     ]
     where
-        myFloatClasses = ["Gimp", "tint2"]
+        myFloatClasses = ["Gimp-2.10", "tint2"]
         myIgnoreResources = ["desktop", "kdesktop", "desktop_window", "notify-osd", "stalonetray", "trayer"]
         viewShift = doF . liftM2 (.) W.greedyView W.shift
 
