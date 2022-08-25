@@ -67,7 +67,7 @@ panel_background_id = 4
 wm_menu = 1
 panel_dock = 1
 panel_pivot_struts = 0
-panel_position = bottom right horizontal
+panel_position = bottom center horizontal
 panel_layer = normal
 panel_monitor = all
 panel_shrink = 0
@@ -160,6 +160,69 @@ launcher_item_app = /usr/share/applications/lxappearance.desktop
 launcher_item_app = /usr/share/applications/microsoftteams-nativefier-9d3173.desktop
 launcher_item_app = /usr/share/applications/books-nativefier-eb83e9.desktop
 launcher_item_app = /usr/share/applications/mupdf.desktop
+
+#-------------------------------------
+# Separator 1
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = empty
+separator_size = 1
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 2
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = empty
+separator_size = 1
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 3
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 4
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 5
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 6
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
+
+#-------------------------------------
+# Separator 7
+separator = new
+separator_background_id = 0
+separator_color = #777777 80
+separator_style = dots
+separator_size = 3
+separator_padding = 1 0
 
 #-------------------------------------
 # Tooltip
