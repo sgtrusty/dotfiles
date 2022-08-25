@@ -81,7 +81,8 @@ done << EOF
 	bc=bc -l
   trash=gio trash
   timestamp=date +%s
-  dotcommit=yadm commit -m "`timestamp`"
+  dotupdate=yadm add -u
+  dotcommit=yadm commit -m "\$(timestamp)"
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
