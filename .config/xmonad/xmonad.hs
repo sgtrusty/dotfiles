@@ -9,7 +9,6 @@
 import XMonad
 
 import XMonad.Actions.UpdatePointer ( updatePointer )
-import XMonad.Actions.Submap
 
 import XMonad.ManageHook ( liftX )
 
@@ -20,7 +19,7 @@ import XMonad.Util.Ungrab
 
 import XMonad.Hooks.EwmhDesktops ( ewmh )
 import XMonad.Hooks.ManageDocks
-    ( checkDock, avoidStruts, docks, manageDocks, Direction2D(D, L, R, U) )
+    ( checkDock, avoidStruts, docks, manageDocks )
 import XMonad.Hooks.ManageHelpers ( composeOne, doFullFloat, isFullscreen, doLower )
 import XMonad.Hooks.RefocusLast ( isFloat)
 
@@ -44,11 +43,12 @@ import XMonad.Layout.Renamed (renamed, Rename(Replace))
 
 import Control.Arrow (first)
 import Control.Monad ( join, when, liftM, liftM2 )
-import Data.Monoid
 import Data.Maybe ( maybeToList, isJust )
+import Data.Monoid
 import Data.List (isSuffixOf)
 import Graphics.X11.ExtraTypes.XF86 (xF86XK_AudioLowerVolume, xF86XK_AudioRaiseVolume, xF86XK_AudioMute, xF86XK_MonBrightnessDown, xF86XK_MonBrightnessUp, xF86XK_AudioPlay, xF86XK_AudioPrev, xF86XK_AudioNext)
-import System.Exit ()
+
+-- import System.Exit ()
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 -- The preferred terminal program, which is used in a binding below and by
@@ -98,12 +98,20 @@ runSelectedAction prompt actions = do
 
 -- https://mail.haskell.org/pipermail/xmonad/2011-March/011157.html
 -- https://github.com/xmonad/xmonad/issues/300
--- willFloat::Query Bool
--- willFloat = ask >>= \w -> liftX $ withDisplay $ \d -> do
---   sh <- io $ getWMNormalHints d w
---   let isFixedSize = isJust (sh_min_size sh) && sh_min_size sh == sh_max_size sh
---   isTransient <- isJust <$> io (getTransientForHint d w)
---   return (isFixedSize || isTransient)
+willFloat::Query Bool
+willFloat = ask >>= \w -> liftX $ withDisplay $ \d -> do
+  sh <- io $ getWMNormalHints d w
+  let isFixedSize = isJust (sh_min_size sh) && sh_min_size sh == sh_max_size sh
+  isTransient <- isJust <$> io (getTransientForHint d w)
+  return (isFixedSize || isTransient)
+  
+-- willFloat w = withDisplay $ \d -> do
+--                 sh <- io $ getWMNormalHints d w
+--                 let isFixedSize = sh_min_size sh /= Nothing
+--                                   && sh_min_size sh == sh_max_size sh
+--                 isTransient <- isJust <$> io (getTransientForHint d w)
+--                 f <- isFloat
+--                 return (isFixedSize || isTransient || f)
   
 -- floating = (ask >>= liftX . willFloat)
 --             -- panel applets make everything shift around when
@@ -461,6 +469,7 @@ myDynamicHook = composeAll . concat $
       , [className =? "smplayer"       --> hasBorder False]
       , [viewShiftClasses]
       , [shiftClasses]
+      , [willFloat --> doF W.shiftMaster]
     -- Don't spawn new windows in the master pane (which is at the top of the
     -- screen). Thanks to dschoepe, aavogt and especially vav in #xmonad on
     -- Freenode (2009-06-30 02:10f CEST).
@@ -530,8 +539,7 @@ myEventHook = mempty
 -- https://stackoverflow.com/questions/23314584/xmonad-focus-hook
 -- myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
 --         | t == enterNotify = do
---                   --  focus win >> windows W.shiftMaster
---                    focus win
+--                    focus win >> windows W.shiftMaster
 --                    sendMessage $ JumpToLayout "Full"
 --                    return (All True)
 --         | t == leaveNotify = do
