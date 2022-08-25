@@ -79,6 +79,9 @@ done << EOF
  	grep=grep --color=auto
  	dmesg=dmesg --color
 	bc=bc -l
+  trash=gio trash
+  timestamp=date +%s
+  dotcommit=yadm commit -m "`timestamp`"
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -98,7 +101,6 @@ done
 unset use_color sh
 
 alias sudo='sudo ' ## safe calls to sudo commands alias'ed above
-alias trash='gio trash' ## adding safe calls to get accostumed to
 alias rm='echo "tip: use trash next time"; rm --verbose --interactive' ## we can disable this, already alias'ed up there anyway
 
 # adding hidden file searcher for fzf
