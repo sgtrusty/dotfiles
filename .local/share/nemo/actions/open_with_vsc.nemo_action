@@ -1,0 +1,11 @@
+[Nemo Action]
+Active=true
+Name=Open in VS Code
+Comment=Open current folder in Visual Studio Code
+Icon-Name=com.visualstudio.code
+Selection=none
+Extensions=any;
+#Quote=double
+EscapeSpaces=true
+Exec=vscodium %P
+Dependencies=vscodium;

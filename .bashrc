@@ -81,8 +81,11 @@ done << EOF
 	bc=bc -l
   trash=gio trash
   timestamp=date +%s
+  dotadd=yadm add
   dotupdate=yadm add -u
   dotcommit=yadm commit -m "\$(timestamp)"
+  :q=exit
+  xcpsel=xclip -sel clip
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -117,6 +120,3 @@ function aprint() { awk '{print $1}'; }
 function aprinta() { awk '{print $2}'; }
 function aprintb() { awk '{print $2}'; }
 function aprintc() { awk '{print $3}'; }
-function xcpsel() { xclip -sel clip; }
-function :q() { exit; }
-
