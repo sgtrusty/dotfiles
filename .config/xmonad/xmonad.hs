@@ -207,7 +207,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- GAPS!!!
     , ((modm .|. controlMask, xK_g), sendMessage $ ToggleGaps)               -- toggle all gaps
-    , ((modm .|. shiftMask, xK_g), sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,60)]) -- reset the GapSpec
+    , ((modm .|. shiftMask, xK_g), sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]) -- reset the GapSpec
     
     -- , ((modm .|. controlMask, xK_t), sendMessage $ IncGap 10 L)              -- increment the left-hand gap
     -- , ((modm .|. shiftMask, xK_t     ), sendMessage $ DecGap 10 L)           -- decrement the left-hand gap
@@ -238,7 +238,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         sendMessage $ setGaps [(L,0), (R,0), (U,0), (D,0)]
         sendMessage $ JumpToLayout "Full",
       do
-        sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,60)]
+        sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]
         sendMessage $ JumpToLayout "Tiled"
     ])
 
@@ -469,7 +469,7 @@ myStartupHook = do
   spawnOnce "exec eww daemon"
   spawn "xsetroot -cursor_name left_ptr"
   spawn "exec ~/.config/xmonad/scripts/lock.sh"
-  spawn "setxkbmap 'us,es' -option grp:alt_shift_toggle"
+  spawn "exec setxkbmap 'us,es' -option grp:alt_shift_toggle"
   spawnOnce "feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png"
   spawnOnce "picom --experimental-backends"
 --  spawnOnce "greenclip daemon"
@@ -506,7 +506,7 @@ defaults = def {
 
       -- hooks, layouts
         manageHook = myManageHook, 
-        layoutHook = gaps [(L,30), (R,30), (U,40), (D,60)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
+        layoutHook = gaps [(L,30), (R,30), (U,40), (D,40)] $ spacingRaw True (Border 10 10 10 10) True (Border 10 10 10 10) True $ smartBorders $ myLayout,
         handleEventHook    = myEventHook,
         logHook            = myLogHook,
         startupHook        = myStartupHook >> addEWMHFullscreen,
