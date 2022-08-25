@@ -464,6 +464,7 @@ myLogHook = return ()
 --
 -- By default, do nothing.
 myStartupHook = do
+  spawnOnce "exec eww open-many bar"
   spawnOnce "exec ~/.config/xmonad/scripts/bartoggle"
   spawnOnce "exec eww daemon"
   spawn "xsetroot -cursor_name left_ptr"
