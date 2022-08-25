@@ -463,6 +463,7 @@ myStartupHook = do
   spawnOnce "picom --experimental-backends"
 --  spawnOnce "greenclip daemon"
   spawnOnce "dunst"
+  spawnOnce "exec xss-lock --transfer-sleep-lock -- betterlockscreen --lock blur"
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
