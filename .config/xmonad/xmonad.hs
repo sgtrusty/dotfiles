@@ -239,7 +239,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         sendMessage $ JumpToLayout "Full",
       do
         sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,60)]
-        sendMessage $ JumpToLayout "Circle"
+        sendMessage $ JumpToLayout "Tiled"
     ])
 
     --  Reset the layouts on the current workspace to default
