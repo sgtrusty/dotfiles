@@ -81,11 +81,12 @@ done << EOF
 	bc=bc -l
   trash=gio trash
   timestamp=date +%s
+  :q=exit
+  xcpsel=xclip -sel clip
   dotadd=yadm add
   dotupdate=yadm add -u
   dotcommit=yadm commit -m "\$(timestamp)"
-  :q=exit
-  xcpsel=xclip -sel clip
+  dotpush=GIT_SSH_COMMAND="ssh -o IPQoS=throughput -i /home/abandon/system/git/keys/sgtrusty_rsa" yadm push
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs

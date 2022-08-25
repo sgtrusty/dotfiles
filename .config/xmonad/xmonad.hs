@@ -12,7 +12,11 @@ import XMonad.Actions.UpdatePointer ( updatePointer )
 import XMonad.Actions.Submap
 
 import XMonad.ManageHook ( liftX )
+
 import XMonad.Util.SpawnOnce ( spawnOnce )
+import XMonad.Util.Ungrab
+import XMonad.Util.Run ( runProcessWithInput )
+
 import XMonad.Hooks.EwmhDesktops ( ewmh )
 import XMonad.Hooks.ManageDocks
     ( avoidStruts, docks, manageDocks, Direction2D(D, L, R, U) )
@@ -64,7 +68,19 @@ toggleFull = withFocused (\windowId -> do
     { floats <- gets (W.floating . windowset);
         if windowId `M.member` floats
         then withFocused $ windows . W.sink
-        else withFocused $ windows . flip W.float (W.RationalRect 0 0 1 1) })  
+        else withFocused $ windows . flip W.float (W.RationalRect 0 0 1 1) })
+
+-- I'd like to have a setup where I have a short list of layouts that can be toggled with the usual "meta+space" combo,
+-- but then have a keybingding that allows me to select from a larger range of configured layouts with dmenu.
+-- https://www.reddit.com/r/xmonad/comments/e8h3dm/getting_a_larger_selection_of_layouts_with_dmenu/
+-- https://github.com/liskin/dotfiles/blob/3b194dc4ef84bb44510c319f1e218469f835d5f5/.xmonad/xmonad.hs#L171-L177
+runSelectedAction :: String -> [(String, X ())] -> X ()
+runSelectedAction prompt actions = do
+    unGrab
+    out <- lines <$> runProcessWithInput "rofi" ["-dmenu", "-p", prompt] (unlines $ map fst actions)
+    case out of
+        [sel] -> maybe (pure ()) id (sel `lookup` actions)
+        _ -> pure ()
 
 -- https://mail.haskell.org/pipermail/xmonad/2011-March/011157.html
 -- https://github.com/xmonad/xmonad/issues/300
@@ -152,6 +168,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_F1    ), spawn "betterlockscreen -l")
 
     -- launch rofi and dashboard
+    , ((modm,               xK_period), spawn "rofimoji")
     , ((modm,               xK_o     ), rofiLauncher)
     , ((modm,               xK_p     ), centerlaunch)
     , ((modm .|. shiftMask, xK_p     ), ewwclose)
@@ -208,7 +225,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_i), sendMessage ExpandSlave) -- %! Expand a slave area
 
      -- Rotate through the available layout algorithms
-    , ((modm,               xK_space ), sendMessage NextLayout)
+    -- , ((modm,               xK_space ), sendMessage NextLayout)
+    , ((modm,               xK_space ), runSelectedAction "layout" laySels)
 
     -- https://www.reddit.com/r/xmonad/comments/npdtxs/toggle_full_screen_in_xmonad/
     -- , ((modm,               xK_f     ), toggleFull)
@@ -256,10 +274,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_t     ), withFocused $ windows . W.sink)
 
     -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
+    , ((modm              , xK_semicolon ), sendMessage (IncMasterN 1))
 
     -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
+    , ((modm              , xK_apostrophe), sendMessage (IncMasterN (-1)))
 
     -- Toggle the status bar gap
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
@@ -332,6 +350,7 @@ myLayout = avoidStruts (
         ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTileMirrored )
         ||| renamed [Replace "Acordion"] ( smartBorders . maximize . minimize . boringWindows $ Accordion )
         ||| renamed [Replace "Simple"]   ( smartBorders . maximize . minimize . boringWindows $  simpleFloat )
+        ||| renamed [Replace "Circle"]     ( noBorders . maximize . minimize . boringWindows $ Circle )
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )
@@ -350,6 +369,14 @@ myLayout = avoidStruts (
 
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
+
+laySels = [ (s, sendMessage $ JumpToLayout s) | s <- l ]
+    where l = [ "Full"
+              , "Tiled"
+              , "Mirror"
+              , "Accordion"
+              , "Simple"
+              , "Circle" ]
 
 ------------------------------------------------------------------------
 -- Event Masks:
