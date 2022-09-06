@@ -10,6 +10,7 @@ import XMonad
 
 import XMonad.Actions.UpdatePointer ( updatePointer )
 import XMonad.Actions.GroupNavigation (nextMatch, historyHook, Direction(History))
+import XMonad.Actions.CycleWS ( nextScreen, prevScreen )
 
 import XMonad.ManageHook ( liftX )
 
@@ -169,7 +170,7 @@ wsMisc3 = "\61713"
 
 wsMusic :: String
 wsMusic = "\61884"
-myWorkspaces    = [wsCode, wsInternet, wsExplorer, wsGames, wsChat, wsMisc1, wsMisc2, wsMisc3, wsMusic]
+myWorkspaces    = [wsInternet, wsExplorer, wsGames, wsChat, wsCode, wsMisc1, wsMisc2, wsMisc3, wsMusic]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
@@ -391,8 +392,11 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
-    , ((mod4Mask, button4), (\w -> windows W.focusUp))
-    , ((mod4Mask, button5), (\w -> windows W.focusDown))
+    , ((modm, button4), (\w -> windows W.focusUp))
+    , ((modm, button5), (\w -> windows W.focusDown))
+
+    , ((modm, 8), \_ -> nextScreen >> updatePointer (0.5, 0.5) (0, 0))
+    , ((modm, 9), \_ -> prevScreen >> updatePointer (0.5, 0.5) (0, 0))
     ]
 
 ------------------------------------------------------------------------
@@ -409,11 +413,11 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 myLayout = --avoidStruts 
     (
             renamed [Replace "Full"]     ( noBorders . maximize . minimize . boringWindows $ Full )
-        ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows . magnifiercz' 2.5 $ mouseResizableTile )
-        ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows . magnifiercz' 2.5 $ mouseResizableTileMirrored )
+        ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows . magnifiercz 1.5 $ mouseResizableTile )
+        ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTileMirrored )
         ||| renamed [Replace "Acordion"] ( smartBorders . maximize . minimize . boringWindows $ Accordion )
         ||| renamed [Replace "Simple"]   ( smartBorders . maximize . minimize . boringWindows $  simpleFloat )
-        ||| renamed [Replace "Circle"]     ( smartBorders . maximize . minimize . boringWindows . magicFocus $ Circle )
+        ||| renamed [Replace "Circle"]     ( smartBorders . maximize . minimize . boringWindows . magnifiercz 1.15 . magicFocus $ Circle )
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )
@@ -549,11 +553,21 @@ isLayoutCircle = fmap (isSuffixOf "Circle") $ gets (description . W.layout . W.w
 
 promoteOnlyIf :: X Bool -> Event -> X All
 promoteOnlyIf cond e@(CrossingEvent {ev_window = w, ev_event_type = t})
-    | t == enterNotify && ev_mode e == notifyNormal
-    = whenX cond (focus w) >> return (All False)
+    | t == enterNotify && ev_mode e == notifyNormal = do
+      winset <- gets windowset  -- data about all workspaces/windows. copied from the link I gave you
+      let ld = description . W.layout . W.workspace . W.current $ winset
+      if (isSuffixOf "Circle" ld)
+        -- then xmessage "then pass"
+        -- else xmessage "then not pass"
+        then  promoteWarp e
+        else return $ All True
+      return $ All True
 promoteOnlyIf _ _ = return $ All True
 
-myEventHook = followOnlyIf (fmap not isLayoutCircle) <+> promoteWarp
+-- promoteWarpCustom :: Event -> X All
+-- promoteWarpCustom = promoteWarp
+
+myEventHook = followOnlyIf (fmap not isLayoutCircle) <+> promoteOnlyIf isLayoutCircle
 -- https://stackoverflow.com/questions/23314584/xmonad-focus-hook
 -- myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
 --         | t == enterNotify = do
