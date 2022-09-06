@@ -10,7 +10,7 @@ import XMonad
 
 import XMonad.Actions.UpdatePointer ( updatePointer )
 import XMonad.Actions.GroupNavigation (nextMatch, historyHook, Direction(History))
-import XMonad.Actions.CycleWS ( nextScreen, prevScreen )
+import XMonad.Actions.CycleWS ( nextWS, prevWS, nextScreen, prevScreen )
 
 import XMonad.ManageHook ( liftX )
 
@@ -397,6 +397,9 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 
     , ((modm, 8), \_ -> nextScreen >> updatePointer (0.5, 0.5) (0, 0))
     , ((modm, 9), \_ -> prevScreen >> updatePointer (0.5, 0.5) (0, 0))
+
+    , ((modm .|. shiftMask, button4), \_ -> nextWS)
+    , ((modm .|. shiftMask, button5), \_ -> prevWS)
     ]
 
 ------------------------------------------------------------------------
