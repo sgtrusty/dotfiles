@@ -9,6 +9,7 @@
 import XMonad
 
 import XMonad.Actions.UpdatePointer ( updatePointer )
+import XMonad.Actions.GroupNavigation (nextMatch, historyHook, Direction(History))
 
 import XMonad.ManageHook ( liftX )
 
@@ -257,7 +258,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_c     ), kill)
 
     -- GAPS!!!
-    , ((modm .|. controlMask, xK_g), sendMessage $ ToggleGaps)               -- toggle all gaps
+    , ((modm,               xK_g), sendMessage $ ToggleGaps)               -- toggle all gaps
     , ((modm .|. shiftMask, xK_g), sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]) -- reset the GapSpec
     
     -- , ((modm .|. controlMask, xK_t), sendMessage $ IncGap 10 L)              -- increment the left-hand gap
@@ -301,8 +302,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_n     ), refresh)
 
     -- Move focus to the next window
-    , ((modm,               xK_Tab   ), windows W.focusDown)
-    , ((modm .|. shiftMask, xK_Tab   ), windows W.focusUp)
+    , ((modm,               xK_Tab   ), nextMatch History (return True))
+    -- , ((modm .|. shiftMask, xK_Tab   ), prevMatch History (return True))
 
     -- Move focus to the next window
     , ((modm,               xK_j     ), windows W.focusDown)
@@ -390,6 +391,8 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
+    , ((mod4Mask, button4), (\w -> windows W.focusUp))
+    , ((mod4Mask, button5), (\w -> windows W.focusDown))
     ]
 
 ------------------------------------------------------------------------
@@ -544,7 +547,13 @@ shiftClasses =
 isLayoutCircle :: X Bool
 isLayoutCircle = fmap (isSuffixOf "Circle") $ gets (description . W.layout . W.workspace . W.current . windowset)
 
-myEventHook = promoteWarp <+> followOnlyIf isLayoutCircle
+promoteOnlyIf :: X Bool -> Event -> X All
+promoteOnlyIf cond e@(CrossingEvent {ev_window = w, ev_event_type = t})
+    | t == enterNotify && ev_mode e == notifyNormal
+    = whenX cond (focus w) >> return (All False)
+promoteOnlyIf _ _ = return $ All True
+
+myEventHook = followOnlyIf (fmap not isLayoutCircle) <+> promoteWarp
 -- https://stackoverflow.com/questions/23314584/xmonad-focus-hook
 -- myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
 --         | t == enterNotify = do
@@ -564,7 +573,7 @@ myEventHook = promoteWarp <+> followOnlyIf isLayoutCircle
 -- Perform an arbitrary action on each internal state change or X event.
 -- See the 'XMonad.Hooks.DynamicLog' extension for examples.
 --
-myLogHook = return ()
+myLogHook = historyHook <+> return ()
 -- myLogHook = updatePointer (0.5, 0.5) (0, 0)
 
 ------------------------------------------------------------------------
