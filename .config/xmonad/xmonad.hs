@@ -33,6 +33,7 @@ import XMonad.Layout.Gaps
       gaps,
       setGaps,
       GapMessage(DecGap, ToggleGaps, IncGap) )
+import XMonad.Layout.Magnifier
 import XMonad.Layout.Maximize
 import XMonad.Layout.Minimize
 import XMonad.Layout.MouseResizableTile
@@ -40,6 +41,7 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.SimpleFloat (simpleFloat)
 import XMonad.Layout.Spacing ( spacingRaw, Border(Border) )
 import XMonad.Layout.Renamed (renamed, Rename(Replace))
+import XMonad.Layout.MagicFocus
 
 import Control.Arrow (first)
 import Control.Monad ( join, when, liftM, liftM2 )
@@ -91,7 +93,7 @@ toggleFloatFull = do
 runSelectedAction :: String -> [(String, X ())] -> X ()
 runSelectedAction prompt actions = do
     unGrab
-    out <- lines <$> runProcessWithInput "rofi" ["-dmenu", "-p", prompt] (unlines $ map fst actions)
+    out <- lines <$> runProcessWithInput "rofi" ["-no-lazy-grab", "-dmenu", "-p", prompt] (unlines $ map fst actions)
     case out of
         [sel] -> maybe (pure ()) id (sel `lookup` actions)
         _ -> pure ()
@@ -201,6 +203,7 @@ ewwclose = spawn "exec eww close-all"
 maimcopy = spawn "maim -s | xclip -selection clipboard -t image/png && notify-send \"Screenshot\" \"Copied to Clipboard\" -i flameshot"
 maimsave = spawn "maim -s ~/Pictures/screenshot/$(date +%Y-%m-%d_%H-%M-%S).png && notify-send \"Screenshot\" \"Saved to Desktop\" -i flameshot"
 rofiLauncher = spawn "rofi -no-lazy-grab -show drun -modi run,drun,window -theme $HOME/.config/rofi/launcher/style -drun-icon-theme \"candy-icons\" "
+rofiLauncherAll = spawn "rofi -no-lazy-grab -combi-modi window,run,drun -show combi -modi combi -theme $HOME/.config/rofi/launcher/style -drun-icon-theme \"candy-icons\" "
 
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
@@ -215,8 +218,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0,                    xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
 
     -- Brightness keys
-    , ((0,                    xF86XK_MonBrightnessUp), spawn "brightnessctl s +10%")
-    , ((0,                    xF86XK_MonBrightnessDown), spawn "brightnessctl s 10-%")
+    , ((0,                    xF86XK_MonBrightnessUp), spawn "xbacklight -inc +10")
+    , ((0,                    xF86XK_MonBrightnessDown), spawn "xbacklight -dec 10")
 
     -- launch a terminal
     , ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
@@ -236,6 +239,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch rofi and dashboard
     , ((modm,               xK_period), spawn "rofimoji")
     , ((modm,               xK_o     ), rofiLauncher)
+    , ((modm .|. shiftMask, xK_o     ), rofiLauncherAll)
     -- launch eww centerbar
     , ((modm,               xK_p     ), cycleAction "centerlaunch" [centerlaunch, ewwclose])
     -- launch eww sidebar
@@ -399,13 +403,14 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = avoidStruts (
+myLayout = --avoidStruts 
+    (
             renamed [Replace "Full"]     ( noBorders . maximize . minimize . boringWindows $ Full )
-        ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTile )
-        ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTileMirrored )
+        ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows . magnifiercz' 2.5 $ mouseResizableTile )
+        ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows . magnifiercz' 2.5 $ mouseResizableTileMirrored )
         ||| renamed [Replace "Acordion"] ( smartBorders . maximize . minimize . boringWindows $ Accordion )
         ||| renamed [Replace "Simple"]   ( smartBorders . maximize . minimize . boringWindows $  simpleFloat )
-        ||| renamed [Replace "Circle"]     ( smartBorders . maximize . minimize . boringWindows $ Circle )
+        ||| renamed [Replace "Circle"]     ( smartBorders . maximize . minimize . boringWindows . magicFocus $ Circle )
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )
@@ -469,11 +474,11 @@ myDynamicHook = composeAll . concat $
       , [className =? "smplayer"       --> hasBorder False]
       , [viewShiftClasses]
       , [shiftClasses]
-      , [willFloat --> doF W.shiftMaster]
+      -- , [willFloat --> doF W.shiftMaster]
     -- Don't spawn new windows in the master pane (which is at the top of the
     -- screen). Thanks to dschoepe, aavogt and especially vav in #xmonad on
     -- Freenode (2009-06-30 02:10f CEST).
-      , [return True =? True --> doF avoidMaster]
+      -- , [return True =? True --> doF avoidMaster]
       -- Prevent windows which get moved to other workspaces from removing the
       -- focus of the currently selected window. Thanks to vav in #xmonad on
       -- Freenode (2010-04-15 21:04 CEST).
@@ -535,7 +540,11 @@ shiftClasses =
 -- return (All True) if the default handler is to be run afterwards. To
 -- combine event hooks use mappend or mconcat from Data.Monoid.
 --
-myEventHook = mempty
+-- myEventHook = mempty
+isLayoutCircle :: X Bool
+isLayoutCircle = fmap (isSuffixOf "Circle") $ gets (description . W.layout . W.workspace . W.current . windowset)
+
+myEventHook = promoteWarp <+> followOnlyIf isLayoutCircle
 -- https://stackoverflow.com/questions/23314584/xmonad-focus-hook
 -- myEventHook e@(CrossingEvent {ev_event_type=t, ev_window=win}) 
 --         | t == enterNotify = do
