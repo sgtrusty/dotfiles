@@ -561,7 +561,6 @@ promoteOnlyIf cond e@(CrossingEvent {ev_window = w, ev_event_type = t})
         -- else xmessage "then not pass"
         then  promoteWarp e
         else return $ All True
-      return $ All True
 promoteOnlyIf _ _ = return $ All True
 
 -- promoteWarpCustom :: Event -> X All
