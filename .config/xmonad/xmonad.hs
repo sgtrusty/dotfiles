@@ -380,7 +380,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 -- Mouse bindings: default actions bound to mouse events
 --
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
-
+    -- using gamer mouse recommended by Xah Lee (maybe other in the future)
 
     -- mod-button1, Raise the window to the top of the stack
     [ ((modm, button1), (\w -> focus w >> windows W.shiftMaster))
@@ -398,9 +398,11 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, button4), (\w -> windows W.focusUp))
     , ((modm, button5), (\w -> windows W.focusDown))
 
+    -- extra mouse buttons, currently not mpaped in util libs
     , ((modm, 8), \_ -> nextScreen >> updatePointer (0.5, 0.5) (0, 0))
     , ((modm, 9), \_ -> prevScreen >> updatePointer (0.5, 0.5) (0, 0))
 
+    -- buttons with modifiers
     , ((modm .|. shiftMask, button4), \_ -> nextWS)
     , ((modm .|. shiftMask, button5), \_ -> prevWS)
     ]
