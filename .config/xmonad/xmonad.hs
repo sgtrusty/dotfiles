@@ -11,6 +11,8 @@ import XMonad
 import XMonad.Actions.UpdatePointer ( updatePointer )
 import XMonad.Actions.GroupNavigation (nextMatch, historyHook, Direction(History))
 import XMonad.Actions.CycleWS ( nextWS, prevWS, nextScreen, prevScreen )
+import XMonad.Actions.FloatSnap
+import qualified XMonad.Actions.FlexibleResize as Flex
 
 import XMonad.ManageHook ( liftX )
 
@@ -388,8 +390,9 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
 
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
-                                       >> windows W.shiftMaster))
+    -- , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
+                                      --  >> windows W.shiftMaster))
+    , ((modm, button3), (\w -> focus w >> Flex.mouseResizeWindow w >> afterDrag (snapMagicResize [R,D] (Just 50) (Just 50) w)))
 
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     , ((modm, button4), (\w -> windows W.focusUp))
