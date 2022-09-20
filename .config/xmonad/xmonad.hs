@@ -421,7 +421,8 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 myLayout = --avoidStruts 
     (
             renamed [Replace "Full"]     ( noBorders . maximize . minimize . boringWindows $ Full )
-        ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows . magnifiercz 1.5 $ mouseResizableTile )
+        ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTile )
+        -- ||| renamed [Replace "Tiled"]    ( smartBorders . maximize . minimize . boringWindows . magnifiercz 1.5 $ mouseResizableTile )
         ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTileMirrored )
         ||| renamed [Replace "Acordion"] ( smartBorders . maximize . minimize . boringWindows $ Accordion )
         ||| renamed [Replace "Simple"]   ( smartBorders . maximize . minimize . boringWindows $  simpleFloat )
@@ -610,6 +611,7 @@ myStartupHook = do
   spawnOnce "exec eww daemon"
   spawn "xsetroot -cursor_name left_ptr"
   spawn "exec ~/.config/xmonad/scripts/lock.sh"
+-- https://superuser.com/questions/59418/how-to-type-special-characters-in-linux by Mark Stosberg
   spawn "exec setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle"
   spawnOnce "feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png"
   spawnOnce "picom --experimental-backends"
