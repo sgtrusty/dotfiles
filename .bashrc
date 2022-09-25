@@ -176,10 +176,10 @@ parse_git_branch() {
 function query {
     case "$1" in
         se)
-            yay -Ss $2
+            pacman -Slq | fzf -q "$2" --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S
             ;;
         sel)
-            pacman -Qs $2
+            pacman -Qq | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -ro pacman -Qs
             ;;
         inf)
             yay -Si $2
@@ -188,19 +188,26 @@ function query {
             pacman -Qi $2
             ;;
         f2p)
-            pacman -Qo $2
+            find // -type f,d,l -print0 2> /dev/null | fzf -q "$2" --preview 'bat -f {} 2> /dev/null || ls -lA --color=always {}' --read0 --print0 | xargs -r --null pacman -Qo
             ;;
         p2f)
-            pacman -Ql $2
+            local file_list=$(pacman -Qsq | fzf -q "$2" --preview 'pacman  -Qi {1}' | xargs -r pacman -Qlq)
+            if [ -n "$file_list" ]; then
+                echo "$file_list" | fzf --multi --preview 'bat -f {} 2> /dev/null || ls -lA --color=always {}' | xargs -r echo
+            fi
             ;;
         orphans)
-            pacman -Qdt
+            pacman -Qdtq | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -r pacman -Qi
             ;;
         explicit)
-            pacman -Qet
+            pacman -Qetq | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -r pacman -Qi
+            ;;
+        deps)
+            pacman -Qdq | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -r pacman -Qi
             ;;
         *)
-            echo "Unknown command. Available options: se sel inf infl f2p p2f orphans explicit"
+            echo "Unknown command. Available options: se sel inf infl f2p p2f deps explicit orphans"
+            # echo "Unknown command. Available options: se sel inf infl f2p p2f orphans explicit"
     esac
 }
 function yt2mp3 {
@@ -221,7 +228,7 @@ function yt2mp3 {
 # Display help for this bashrc
 function bashrc {
     local fnc_desc=" \u26AC \e[38;5;4m%s\e[0m %s\n    \e[38;5;245m%s\e[0m\n"
-    local fnc_desc_long="\t -> \e[38;5;4m%s\e[0m %s\n    \t\e[38;5;245m%s\e[0m\n"
+    local fnc_desc_long="\t-> \e[38;5;4m%s\e[0m %s\n\t   \e[38;5;245m%s\e[0m\n"
     printf '\e[1mThis custom bashrc offers the following functions:\e[0m\n'
     printf "$fnc_desc" "nvusage" "" "Show live usage of NVIDIA graphics card"
     # printf "$fnc_desc" "expl" "<package name> ..." "Mark packages as explicitly installed (standalone)"
@@ -236,15 +243,16 @@ function bashrc {
     printf "$fnc_desc" "psg" "<process name>" "Search for a currently running process with specified name"
     printf "$fnc_desc" "sockets" "" "Show all currently open tcp and udp sockets"
     printf "$fnc_desc" "yt2mp3" "<video-id> <path/to/ouputfolder>" "Download youtube video and convert to mp3 file"
-    printf "$fnc_desc" "query" "<modifier> <...args>" "Package querying funcs"
-    printf "$fnc_desc_long" "query se" "<package name> ..." "Search for pacman/AUR packages online"
-    printf "$fnc_desc_long" "query sel" "<package name> ..." "Search for locally installed packages"
-    printf "$fnc_desc_long" "query inf" "<package name>" "Display information of a specified pacman/AUR package"
-    printf "$fnc_desc_long" "query infl" "<package name>" "Display information of a specified locally installed package"
-    printf "$fnc_desc_long" "query f2p" "<path/to/file>" "Display the package which belongs to a specified file"
-    printf "$fnc_desc_long" "query p2f" "<package name>" "Display all files that belong to a package"
-    printf "$fnc_desc_long" "query orphans" "" "Display all orphaned packages"
-    printf "$fnc_desc_long" "query explicit" "" "Display all explicitly installed packages"
+    printf "$fnc_desc" "query" "<modifier> [optional search term]" "Package querying functions"
+    printf "$fnc_desc_long" "query se" "[package name]" "Search for pacman/AUR packages online"
+    printf "$fnc_desc_long" "query sel" "[package name]" "Search for locally installed packages"
+    printf "$fnc_desc_long" "query inf" "[package name]" "Display information of a specified pacman/AUR package"
+    printf "$fnc_desc_long" "query infl" "[package name]" "Display information of a specified locally installed package"
+    printf "$fnc_desc_long" "query f2p" "[path/to/file]" "Display the package which belongs to a specified file"
+    printf "$fnc_desc_long" "query p2f" "[package name]" "Display all files that belong to a package"
+    printf "$fnc_desc_long" "query orphans" "[package name]" "Display all orphaned packages"
+    printf "$fnc_desc_long" "query explicit" "[package name]" "Display all explicitly installed packages"
+    printf "$fnc_desc_long" "query deps" "[package name]" "Display all packages that are marked as dependency"
     printf "\n"
 }
 # http://mywiki.wooledge.org/BashFAQ/037
