@@ -105,18 +105,18 @@ fi
 while read -r i; do
 	aliasargs+=("$i")
 done << EOF
-	cp=cp --verbose --interactive
-	mv=mv --verbose --interactive
-	rm=rm --verbose --interactive
-	ln=ln --verbose --interactive
-	htop=htop --tree
-	egrep=egrep --colour=auto
- 	fgrep=fgrep --colour=auto
- 	ls=ls --color=auto
- 	dir=dir --color=auto
- 	grep=grep --color=auto
- 	dmesg=dmesg --color
-	bc=bc -l
+    cp=cp --verbose --interactive
+    mv=mv --verbose --interactive
+    rm=rm --verbose --interactive
+    ln=ln --verbose --interactive
+    htop=htop --tree
+    egrep=egrep --colour=auto
+    fgrep=fgrep --colour=auto
+    ls=ls --color=auto
+    dir=dir --color=auto
+    grep=grep --color=auto
+    dmesg=dmesg --color
+    bc=bc -l
     trash=gio trash
     timestamp=date +%s
     :q=exit
