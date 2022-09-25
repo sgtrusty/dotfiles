@@ -28,12 +28,21 @@ case ${TERM} in
     ;;
 esac
 
-echo -e "\e[37;1m        ___.                        .___                " #           .__   .__       .__                              "
-echo -e "\e[34;1m _____  \_ |__  _____     ____    __| _/ ____    ____   " #   _____   |  |  |  |      |  |__    ____  ______    ____   "
-echo -e "\e[32;1m \__  \  | __ \ \__  \   /    \  / __ | /  _ \  /    \  " #   \__  \  |  |  |  |      |  |  \  /  _ \ \____ \ _/ __ \  "
-echo -e "\e[32;1m  / __ \_| \_\ \ / __ \_|   |  \/ /_/ |(  <_> )|   |  \ " #    / __ \_|  |__|  |__    |   Y  \(  <_> )|  |_> >\  ___/  "
-echo -e "\e[95;1m (____  /|___  /(____  /|___|  /\____ | \____/ |___|  / " #   (____  /|____/|____/    |___|  / \____/ |   __/  \___  > "
-echo -e "\e[37;1m      \/     \/      \/      \/      \/             \/  " #        \/                      \/         |__|         \/  "
+if [ "$COLUMNS" -lt 117 ]; then
+    echo -e "\e[37;1m         ___.                        .___                " #           .__   .__       .__                              "
+    echo -e "\e[34;1m  _____  \_ |__  _____     ____    __| _/ ____    ____   " #   _____   |  |  |  |      |  |__    ____  ______    ____   "
+    echo -e "\e[32;1m  \__  \  | __ \ \__  \   /    \  / __ | /  _ \  /    \  " #   \__  \  |  |  |  |      |  |  \  /  _ \ \____ \ _/ __ \  "
+    echo -e "\e[32;1m   / __ \_| \_\ \ / __ \_|   |  \/ /_/ |(  <_> )|   |  \ " #    / __ \_|  |__|  |__    |   Y  \(  <_> )|  |_> >\  ___/  "
+    echo -e "\e[95;1m  (____  /|___  /(____  /|___|  /\____ | \____/ |___|  / " #   (____  /|____/|____/    |___|  / \____/ |   __/  \___  > "
+    echo -e "\e[37;1m       \/     \/      \/      \/      \/             \/  " #        \/                      \/         |__|         \/  "
+else
+    echo -e "\e[37;1m         ___.                        .___                           .__   .__       .__                              "
+    echo -e "\e[34;1m  _____  \_ |__  _____     ____    __| _/ ____    ____      _____   |  |  |  |      |  |__    ____  ______    ____   "
+    echo -e "\e[32;1m  \__  \  | __ \ \__  \   /    \  / __ | /  _ \  /    \     \__  \  |  |  |  |      |  |  \  /  _ \ \____ \ _/ __ \  "
+    echo -e "\e[32;1m   / __ \_| \_\ \ / __ \_|   |  \/ /_/ |(  <_> )|   |  \     / __ \_|  |__|  |__    |   Y  \(  <_> )|  |_> >\  ___/  "
+    echo -e "\e[95;1m  (____  /|___  /(____  /|___|  /\____ | \____/ |___|  /    (____  /|____/|____/    |___|  / \____/ |   __/  \___  > "
+    echo -e "\e[37;1m       \/     \/      \/      \/      \/             \/          \/                      \/         |__|         \/  "
+fi
 
 [[ "$PS1" ]] && /usr/bin/fortune | while read line; do if [ -z "${line}" ]; then echo "$line"; else echo -e " \e[39;1m>> \e[90;1m$line \e[39;1m<<"; fi done
 
@@ -108,22 +117,22 @@ done << EOF
  	grep=grep --color=auto
  	dmesg=dmesg --color
 	bc=bc -l
-  trash=gio trash
-  timestamp=date +%s
-  :q=exit
-  xcpsel=xclip -sel clip
-  dotadd=yadm add
-  dotupdate=yadm add -u
-  dotcommit=yadm commit -m "\$(timestamp)"
-  dotpush=GIT_SSH_COMMAND="ssh -o IPQoS=throughput -i /home/abandon/system/git/keys/sgtrusty_rsa" yadm push
-  updatemirrors=sudo reflector --verbose --latest 200 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
-  applist=echo AppList -- From official repos: && pacman -Qe && echo AppList -- From Arch User Repository: && pacman -Qm
-  nvusage=watch -n 0.5 nvidia-smi
-  sockets=ss -tulpne
-  cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
-  psg=ps aux | grep -v grep | grep -i -e VSZ -e
-  hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
-  hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1920x1080 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    trash=gio trash
+    timestamp=date +%s
+    :q=exit
+    xcpsel=xclip -sel clip
+    dotadd=yadm add
+    dotupdate=yadm add -u
+    dotcommit=yadm commit -m "\$(timestamp)"
+    dotpush=GIT_SSH_COMMAND="ssh -o IPQoS=throughput -i /home/abandon/system/git/keys/sgtrusty_rsa" yadm push
+    updatemirrors=sudo reflector --verbose --latest 200 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+    applist=echo AppList -- From official repos: && pacman -Qe && echo AppList -- From Arch User Repository: && pacman -Qm
+    nvusage=watch -n 0.5 nvidia-smi
+    sockets=ss -tulpne
+    cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
+    psg=ps aux | grep -v grep | grep -i -e VSZ -e
+    hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
+    hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1920x1080 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
