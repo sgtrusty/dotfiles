@@ -197,7 +197,10 @@ function query {
             fi
             ;;
         orphans)
-            pacman -Qdtq | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -r pacman -Qi
+            local package_list=$(pacman -Qdtq)
+            if [ -n "$package_list" ]; then
+            echo "$package_list" | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -r pacman -Qi
+            fi
             ;;
         explicit)
             pacman -Qetq | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -r pacman -Qi
