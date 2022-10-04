@@ -76,21 +76,21 @@ else
 fi
 
 if ${use_color} ; then
-# if [[ ${EUID} == 0 ]] ; then
-#  PS1='\[\033[01;31m\]\h\[\033[01;34m\] \w \$\[\033[00m\] '
-# else
-#  PS1='\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
-# fi
-PS1='\n'
-PS1+='\[\e[36;1m\]\u'                # Show username in blue + bold
-PS1+='\[\e[36;1m\]@'                # Show @ in blue + bold
-PS1+='\[\e[36;1m\]\h'               # Show hostname in blue + bold
-PS1+='\[\e[32;1m\]:'                # Show : in green + bold WorkingDir $ in Green + Bold
-PS1+='\[\e[32;1m\]\W'               # Show WorkingDir in green + bold 
-PS1+='\[\e[32;1m\]\$'               # Show $ in green + bold
-PS1+="\[\e[33;1m\]\$(parse_git_branch)"     # Show current git branch in yellow, if there's one at all
-PS1+='\[\e[39;0m\] '                # Give it a space and make input text white and not bold
-PS1+='\n\033[31;1m${?#0}\033[0;97m> \033[0m'
+ if [[ ${EUID} == 0 ]] ; then
+   PS1='\[\033[01;31m\]\h\[\033[01;34m\] \w \$\[\033[00m\] '
+ else
+   PS1='\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] '
+ fi
+#PS1='\n'
+#PS1+='\[\e[36;1m\]\u'                # Show username in blue + bold
+#PS1+='\[\e[36;1m\]@'                # Show @ in blue + bold
+#PS1+='\[\e[36;1m\]\h'               # Show hostname in blue + bold
+#PS1+='\[\e[32;1m\]:'                # Show : in green + bold WorkingDir $ in Green + Bold
+#PS1+='\[\e[32;1m\]\W'               # Show WorkingDir in green + bold 
+#PS1+='\[\e[32;1m\]\$'               # Show $ in green + bold
+#PS1+="\[\e[33;1m\]\$(parse_git_branch)"     # Show current git branch in yellow, if there's one at all
+#PS1+='\[\e[39;0m\] '                # Give it a space and make input text white and not bold
+#PS1+='\033[31;1m${?#0}\033[0;97m> \033[0m'
 
  #BSD#@export CLICOLOR=1
  #GNU#@alias ls='ls --color=auto'
@@ -132,7 +132,7 @@ done << EOF
     cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
-    hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1920x1080 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1280x800 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs

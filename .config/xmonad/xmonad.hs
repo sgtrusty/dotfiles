@@ -12,6 +12,7 @@ import XMonad.Actions.UpdatePointer ( updatePointer )
 import XMonad.Actions.GroupNavigation (nextMatch, historyHook, Direction(History))
 import XMonad.Actions.CycleWS ( nextWS, prevWS, nextScreen, prevScreen )
 import XMonad.Actions.FloatSnap
+import XMonad.Actions.Submap
 import qualified XMonad.Actions.FlexibleResize as Flex
 
 import XMonad.ManageHook ( liftX )
@@ -232,10 +233,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0,                    xK_Print), maimcopy)
     , ((modm,                 xK_Print), maimsave)
 
-    -- , ((0, xK_Super_L), submap . M.fromList $
-    --   [ ((0, xK_e),    submap . M.fromList $
-    --     [ ((0, xK_f),  spawn "notify-send \"wef combo detected!\"" ) ])
-    --   ])
+    , ((0, xK_Super_R), submap . M.fromList $
+      [ ((0, xK_e),    submap . M.fromList $
+        [ ((0, xK_f),  spawn "notify-send \"wef combo detected!\"" ) ])
+      ])
 
     -- lock screen
     , ((modm,               xK_F1    ), spawn "betterlockscreen -l")
@@ -397,14 +398,27 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     , ((modm, button4), (\w -> windows W.focusUp))
     , ((modm, button5), (\w -> windows W.focusDown))
+    , ((modm .|. shiftMask, button4), (\_ -> nextWS))
+    , ((modm .|. shiftMask, button5), (\w -> prevWS))
+    , ((0, 6), (\w -> windows W.focusUp))
+    , ((0, 7), (\w -> windows W.focusDown))
 
     -- extra mouse buttons, currently not mpaped in util libs
-    , ((modm, 8), \_ -> nextScreen >> updatePointer (0.5, 0.5) (0, 0))
-    , ((modm, 9), \_ -> prevScreen >> updatePointer (0.5, 0.5) (0, 0))
+    -- , ((modm, 8), \_ -> nextScreen >> updatePointer (0.5, 0.5) (0, 0))
+    -- , ((modm, 9), \_ -> prevScreen >> updatePointer (0.5, 0.5) (0, 0))
 
-    -- buttons with modifiers
-    , ((modm .|. shiftMask, button4), \_ -> nextWS)
-    , ((modm .|. shiftMask, button5), \_ -> prevWS)
+    -- -- buttons .|. . shiftMask, button5), \_qq -> prevWS)
+
+    -- , ((0, 8), \_ -> spawn "notify-send \"mouse 8\"" )
+    -- , ((0, 9), \_ -> spawn "notify-send \"mouse 9\"" )
+    -- , ((modm, 8), \_ -> spawn "notify-send \"mousemod 8\"" )
+    -- , ((modm, 9), \_ -> spawn "notify-send \"mousemod 9\"" )
+    , ((0, 9), \_ -> spawn "xdotool keydown Super_R")
+    , ((modm, 9), \_ -> spawn "xdotool keydown Super_R")
+    , ((0, 8), \_ -> spawn "xdotool keydown Super_R && sleep 5 && xdotool keyup Super_R")
+    , ((modm, 8), \_ -> spawn "xdotool keyup Super_R")
+    -- , ((0, 9), \_ -> spawn "xdotool keydown Super_R")
+    -- , ((0, 9), \_ -> prevWS)
     ]
 
 ------------------------------------------------------------------------
