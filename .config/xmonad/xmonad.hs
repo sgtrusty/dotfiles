@@ -400,8 +400,8 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, button5), (\w -> windows W.focusDown))
     , ((modm .|. shiftMask, button4), (\_ -> nextWS))
     , ((modm .|. shiftMask, button5), (\w -> prevWS))
-    , ((0, 6), (\w -> windows W.focusUp))
-    , ((0, 7), (\w -> windows W.focusDown))
+    , ((modm, 6), (\w -> prevWS))
+    , ((modm, 7), (\w -> nextWS))
 
     -- extra mouse buttons, currently not mpaped in util libs
     -- , ((modm, 8), \_ -> nextScreen >> updatePointer (0.5, 0.5) (0, 0))
