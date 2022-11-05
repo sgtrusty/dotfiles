@@ -132,7 +132,7 @@ done << EOF
     cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
-    hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1280x800 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi_bg=xrandr --output HDMI-1-0 --left-of eDP-1 --mode 1280x800 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -225,8 +225,10 @@ function yt2mp3 {
         base_path="$base_path/"
     fi
  
-    echo "youtube-dl --newline -i --restrict-filenames -o '$base_path%(title)s.%(ext)s' -x --audio-format mp3 --audio-quality 0 --embed-thumbnail https://www.youtube.com/watch?v=$1"
-    youtube-dl --newline -i --restrict-filenames -o "$base_path%(title)s.%(ext)s" -x --audio-format mp3 --audio-quality 0 --embed-thumbnail https://www.youtube.com/watch?v=$1 | less
+    #echo "youtube-dl --newline -i --restrict-filenames -o '$base_path%(title)s.%(ext)s' -x --audio-format mp3 --audio-quality 0 --embed-thumbnail https://www.youtube.com/watch?v=$1"
+    #youtube-dl --newline -i --restrict-filenames -o "$base_path%(title)s.%(ext)s" -x --audio-format mp3 --audio-quality 0 --embed-thumbnail https://www.youtube.com/watch?v=$1 | less
+    echo "yt-dlp --ignore-errors --format bestaudio --extract-audio --audio-format mp3 --audio-quality 160K --output '$base_path%(title)s.%(ext)s' --yes-playlist $1"
+    yt-dlp --ignore-errors --format bestaudio --extract-audio --audio-format mp3 --audio-quality 160K --output "$base_path%(title)s.%(ext)s" --yes-playlist $1
 }
 # Display help for this bashrc
 function bashrc {
