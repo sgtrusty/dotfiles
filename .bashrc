@@ -133,6 +133,8 @@ done << EOF
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
     hdmi_bg=xrandr --output HDMI-1-0 --left-of eDP-1 --mode 1280x800 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1024x768 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    wine=su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
