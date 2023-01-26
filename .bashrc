@@ -137,8 +137,8 @@ done << EOF
     hdmi_off=xrandr --output HDMI-1-0 --off
     wine=echo 'Logging in to wine through docker...' && su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
     kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle
-    docker-kill-all=confirm "kill all docker containers?" && dockerize rm \$(dockerize ps --filter status=exited -q)
-    docker-hard-prune=confirm "Do you want to prune all docker images & data?" && dockerize system prune --all --force
+    docker-kill-all=confirm "kill all docker containers?" && sudo -i -u docker docker rm \$(sudo -i -u docker docker ps --filter status=exited -q)
+    docker-hard-prune=confirm "Do you want to prune all docker images & data?" && sudo -i -u docker docker system prune --all --force
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
