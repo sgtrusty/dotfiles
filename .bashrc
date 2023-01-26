@@ -170,10 +170,7 @@ export EDITOR=vim
 
 # functions
 ## move this to another file sometime
-function aprint() { awk '{print $1}'; }
-function aprinta() { awk '{print $2}'; }
-function aprintb() { awk '{print $2}'; }
-function aprintc() { awk '{print $3}'; }
+function aprint() { awk "{print \$${1:-1}}"; }
 fzfyay () {
   yay -Slq | fzf -m --preview 'cat <(yay -Si {1}) <(yay -Fl {1} | awk "{print \$2}")' | xargs -ro  yay -S
 }
