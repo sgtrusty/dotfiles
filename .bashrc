@@ -134,7 +134,11 @@ done << EOF
     hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
     hdmi_bg=xrandr --output HDMI-1-0 --left-of eDP-1 --mode 1280x800 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
     hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1024x768 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
-    wine=su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
+    hdmi_off=xrandr --output HDMI-1-0 --off
+    wine=echo 'Logging in to wine through docker...' && su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
+    kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle
+    docker-kill-all=confirm "kill all docker containers?" && dockerize rm \$(dockerize ps --filter status=exited -q)
+    docker-hard-prune=confirm "Do you want to prune all docker images & data?" && dockerize system prune --all --force
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -147,6 +151,8 @@ done
 unset use_color sh
 
 alias sudo='sudo ' ## safe calls to sudo commands alias'ed above
+alias dockerize='sudo -i -u docker docker '
+#function dockerize () { su - docker -c docker $1; }
 #alias sudo='doas ' ## future sudo replacement
 alias rm='echo "tip: use trash next time"; rm --verbose --interactive' ## we can disable this, already alias'ed up there anyway
 
@@ -295,4 +301,33 @@ colors8() {
                 printf "\e[$c;1m $c"
         done
         printf "\e[0;0m"
+}
+wget_site() {
+    if [ $# -ne 1 ]; then
+        echo "First parameter must be set!"
+        echo "(Usage: wget_site <site-url>)"
+        return
+    fi
+
+    local domain=$(echo '$1' | sed -e 's|^[^/]*//||' -e 's|/.*$||')
+    if [ $1 == $domain ]; then
+        echo "You domain is not"
+        return
+    fi
+
+    #wget --recursive --convert-links --restrict-file-names=unix --domains $domain --no-parent $1 
+    wget --content-disposition -Nrp --restrict-file-names=nocontrol $1 
+}
+confirm() {
+    # call with a prompt string or use a default
+    read -r -n 1 -p "${1:-Are you sure?} [y/N]" response
+    case "$response" in
+        [yY][eE][sS]|[yY]) 
+            true
+            ;;
+        *)
+	    echo ""
+            false
+            ;;
+    esac
 }

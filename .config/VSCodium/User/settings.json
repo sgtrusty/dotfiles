@@ -3,5 +3,6 @@
     "glassit.alpha": 220,
     "explorer.autoReveal": false,
     "haskell.manageHLS": "PATH",
-    "git.autofetch": true
+    "git.autofetch": true,
+    "window.zoomLevel": 1
 }
