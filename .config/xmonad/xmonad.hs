@@ -625,6 +625,7 @@ myStartupHook = do
   spawnOnce "exec eww daemon"
   spawn "xsetroot -cursor_name left_ptr"
   spawn "exec ~/.config/xmonad/scripts/lock.sh"
+  spawn "exec ~/.config/eww/bar/launch_bar"
 -- https://superuser.com/questions/59418/how-to-type-special-characters-in-linux by Mark Stosberg
   spawn "exec setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle"
   spawnOnce "feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png"
