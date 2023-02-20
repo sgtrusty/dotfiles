@@ -112,6 +112,7 @@ done << EOF
     htop=htop --tree
     egrep=egrep --colour=auto
     fgrep=fgrep --colour=auto
+    ddmonitor=watch -n5 'sudo kill -USR1 \$(pgrep ^dd$)'
     ls=ls --color=auto
     dir=dir --color=auto
     grep=grep --color=auto
@@ -132,8 +133,8 @@ done << EOF
     cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
-    hdmi_bg=xrandr --output HDMI-1-0 --left-of eDP-1 --mode 1280x800 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
-    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1024x768 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1280x1024 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1280x720 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
     hdmi_off=xrandr --output HDMI-1-0 --off
     wine=echo 'Logging in to wine through docker...' && su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
     kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle

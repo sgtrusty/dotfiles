@@ -59,7 +59,7 @@ border_color_pressed = #000000 100
 
 #-------------------------------------
 # Panel
-panel_items = LTSBC
+panel_items = LT
 panel_size = 66% 45
 panel_margin = 2 2
 panel_padding = 12 6 8
