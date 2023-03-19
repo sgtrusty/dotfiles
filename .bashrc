@@ -140,6 +140,7 @@ done << EOF
     kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle
     docker-kill-all=confirm "kill all docker containers?" && sudo -i -u docker docker rm \$(sudo -i -u docker docker ps --filter status=exited -q)
     docker-hard-prune=confirm "Do you want to prune all docker images & data?" && sudo -i -u docker docker system prune --all --force
+    ip-veth-clean=for veth in \$(ip addr | grep "^veth" | cut -d' ' -f1); do ip link set $veth down; done
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -328,4 +329,20 @@ confirm() {
             false
             ;;
     esac
+}
+# https://explainshell.com/
+# https://www.mankier.com/
+explain () {
+	if [ "$#" -eq 0 ]; then
+		while read  -p "Command: " cmd; do
+			curl -Gs "https://www.mankier.com/api/explain/?cols="$(tput cols) --data-urlencode "q=$cmd"
+		done
+		echo "Bye!"
+	elif [ "$#" -eq 1 ]; then
+		curl -Gs "https://www.mankier.com/api/explain/?cols="$(tput cols) --data-urlencode "q=$1"
+	else
+		echo "Usage"
+		echo "explain                  interactive mode."
+		echo "explain 'cmd -o | ...'   one quoted command to explain it."
+	fi
 }

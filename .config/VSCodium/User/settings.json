@@ -4,5 +4,9 @@
     "explorer.autoReveal": false,
     "haskell.manageHLS": "PATH",
     "git.autofetch": true,
-    "window.zoomLevel": 1
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "window.zoomLevel": 1,
+    "diffEditor.ignoreTrimWhitespace": false
 }
