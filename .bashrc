@@ -141,6 +141,8 @@ done << EOF
     docker-kill-all=confirm "kill all docker containers?" && sudo -i -u docker docker rm \$(sudo -i -u docker docker ps --filter status=exited -q)
     docker-hard-prune=confirm "Do you want to prune all docker images & data?" && sudo -i -u docker docker system prune --all --force
     ip-veth-clean=for veth in \$(ip addr | grep "^veth" | cut -d' ' -f1); do ip link set $veth down; done
+    redshift_laptop=redshift -m randr:crtc=0 -o 1750
+    redshift_monitor=redsihft -m randr:crtc=4 -o 1750
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -329,6 +331,9 @@ confirm() {
             false
             ;;
     esac
+}
+find_fortune () {
+	grep -A 2 -B 2 -n "$1" /usr/share/fortune/*
 }
 # https://explainshell.com/
 # https://www.mankier.com/
