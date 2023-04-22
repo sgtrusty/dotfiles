@@ -351,3 +351,6 @@ explain () {
 		echo "explain 'cmd -o | ...'   one quoted command to explain it."
 	fi
 }
+wayback_machine_downloader () {
+	docker run --rm -it -v $PWD/websites:/websites hartator/wayback-machine-downloader $1
+}

@@ -7,6 +7,5 @@
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "window.zoomLevel": 1,
-    "diffEditor.ignoreTrimWhitespace": false
+    "window.zoomLevel": 1
 }
