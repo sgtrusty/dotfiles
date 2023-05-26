@@ -143,6 +143,9 @@ done << EOF
     ip-veth-clean=for veth in \$(ip addr | grep "^veth" | cut -d' ' -f1); do ip link set $veth down; done
     redshift_laptop=redshift -m randr:crtc=0 -o 1750
     redshift_monitor=redsihft -m randr:crtc=4 -o 1750
+    ..=cd ..
+    cd..=cd ..
+    obs-camera=sudo modprobe v4l2loopback video_nr=2 card_label="OBS Virtual Camera" && obs
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -353,4 +356,26 @@ explain () {
 }
 wayback_machine_downloader () {
 	docker run --rm -it -v $PWD/websites:/websites hartator/wayback-machine-downloader $1
+}
+bc_temp() {
+    if [ $# -ne 2 ]; then
+        echo "First and second parameter must be set!"
+        echo "(Usage: bc_temp <celcius|farenheit> <temp>)"
+        return
+    elif [ $1 != "celcius" ] && [ $1 != "farenheit" ]; then
+	echo "Usage"
+	echo "bc_temp takes first param celcius OR farenheit only..."
+	echo "Others not supported at the moment."	
+	return
+    fi
+
+    local temp ret
+    if [ $1 == "celcius" ]; then
+	temp=$(printf %.2f $(echo "($2 - 32) * 5/9" | bc -l))
+	ret='C'
+    elif [ $1 == "farenheit" ]; then
+	temp=$(printf %.2f $(echo "($2  * 9/5) + 32" | bc -l))
+	ret='F'
+    fi
+    echo $temp\° $ret
 }
