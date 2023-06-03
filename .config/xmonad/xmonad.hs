@@ -631,7 +631,7 @@ myStartupHook = do
 -- https://superuser.com/questions/59418/how-to-type-special-characters-in-linux by Mark Stosberg
   spawn "exec setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle"
   spawnOnce "feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png"
-  spawnOnce "picom --experimental-backends"
+  spawnOnce "picom"
 --  spawnOnce "greenclip daemon"
   spawnOnce "dunst"
   spawnOnce "exec xss-lock --transfer-sleep-lock -- betterlockscreen --lock blur"

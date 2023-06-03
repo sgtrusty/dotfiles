@@ -132,9 +132,10 @@ done << EOF
     sockets=ss -tulpne
     cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
-    hdmi=optimus-manager --switch hybrid && sudo pkill lightdm
-    hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1280x1024 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
-    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP-1 --mode 1280x720 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi=sudo envycontrol -s nvidia --rtd3
+    hdmi_bg=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1'
+    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x1024 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi_bg3=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x720 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
     hdmi_off=xrandr --output HDMI-1-0 --off
     wine=echo 'Logging in to wine through docker...' && su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
     kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle
@@ -145,7 +146,7 @@ done << EOF
     redshift_monitor=redsihft -m randr:crtc=4 -o 1750
     ..=cd ..
     cd..=cd ..
-    obs-camera=sudo modprobe v4l2loopback video_nr=2 card_label="OBS Virtual Camera" && obs
+    obs-camera=sudo modprobe v4l2loopback video_nr=2 card_label="OBS Virtual Camera" && obs &
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
