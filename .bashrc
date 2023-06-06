@@ -133,7 +133,7 @@ done << EOF
     cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=sudo envycontrol -s nvidia --rtd3
-    hdmi_bg=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1'
+    hdmi_bg=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1' && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
     hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x1024 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
     hdmi_bg3=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x720 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
     hdmi_off=xrandr --output HDMI-1-0 --off
@@ -147,6 +147,10 @@ done << EOF
     ..=cd ..
     cd..=cd ..
     obs-camera=sudo modprobe v4l2loopback video_nr=2 card_label="OBS Virtual Camera" && obs &
+    fjffwork=firejail --private=/home/abandon/system/firejail/ff_work firefox -no-remote &
+    fjsr=SURFRAW_graphical_browser="firejail --private=/home/abandon/system/firejail/falkon_lookup falkon" sr 
+    fjsr_clean=trash /home/abandon/system/firejail/falkon_lookup; mkdir /home/abandon/system/firejail/falkon_lookup
+    mapview=telnet mapscii.me
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
