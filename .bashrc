@@ -150,6 +150,7 @@ done << EOF
     fjffwork=firejail --private=/home/abandon/system/firejail/ff_work firefox -no-remote &
     fjsr=SURFRAW_graphical_browser="firejail --private=/home/abandon/system/firejail/falkon_lookup falkon" sr 
     fjsr_clean=trash /home/abandon/system/firejail/falkon_lookup; mkdir /home/abandon/system/firejail/falkon_lookup
+    ios_mount=ifuse --documents org.videolan.vlc-ios ~/system/ios
     mapview=telnet mapscii.me
 EOF
 alias "${aliasargs[@]}"
