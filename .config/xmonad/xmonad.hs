@@ -625,7 +625,10 @@ myLogHook = historyHook <+> return ()
 -- By default, do nothing.
 myStartupHook = do
   spawnOnce "exec ~/.config/xmonad/scripts/bartoggle"
+  spawnOnce "exec flameshot &"
   spawnOnce "exec eww daemon"
+  -- spawnOnce "xset b off"
+  spawnOnce "xset b 1 600 150"
   spawn "xsetroot -cursor_name left_ptr"
   spawn "exec ~/.config/xmonad/scripts/lock.sh"
   spawn "exec ~/.config/eww/bar/launch_bar"
