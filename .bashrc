@@ -133,9 +133,9 @@ done << EOF
     cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=sudo envycontrol -s nvidia --rtd3
-    hdmi_bg=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1' && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
-    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x1024 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
-    hdmi_bg3=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x720 --auto && exec feh --bg-fill Pictures/wallpaper/wallhaven-y8oqgl.png
+    hdmi_bg=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1' && exec feh --bg-fill Pictures/bg/bg.png
+    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x1024 --auto && exec feh --bg-fill Pictures/bg/bg.png
+    hdmi_bg3=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x720 --auto && exec feh --bg-fill Pictures/bg/bg.png
     hdmi_off=xrandr --output HDMI-1-0 --off
     wine=echo 'Logging in to wine through docker...' && su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
     kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle
@@ -152,6 +152,8 @@ done << EOF
     fjsr_clean=trash /home/abandon/system/firejail/falkon_lookup; mkdir /home/abandon/system/firejail/falkon_lookup
     ios_mount=ifuse --documents org.videolan.vlc-ios ~/system/ios
     mapview=telnet mapscii.me
+    smp=smplayer
+    bc=bc -l ~/system/scripts/bc/code/funcs.bc
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
