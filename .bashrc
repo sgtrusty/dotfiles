@@ -134,8 +134,8 @@ done << EOF
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=sudo envycontrol -s nvidia --rtd3
     hdmi_bg=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1' && exec feh --bg-fill Pictures/bg/bg.png
-    hdmi_bg2=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x1024 --auto && exec feh --bg-fill Pictures/bg/bg.png
-    hdmi_bg3=xrandr --output HDMI-1-0 --right-of eDP --mode 1280x720 --auto && exec feh --bg-fill Pictures/bg/bg.png
+    hdmi_monitors=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --primary && xrandr --output HDMI-0 --right-of eDP-1-0 --mode 1280x800 --auto && exec feh --bg-fill Pictures/bg/bg.png 
+    hdmi_monitors_off=xrandr --output HDMI-0 --off
     hdmi_off=xrandr --output HDMI-1-0 --off
     wine=echo 'Logging in to wine through docker...' && su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
     kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle
@@ -154,6 +154,8 @@ done << EOF
     mapview=telnet mapscii.me
     smp=smplayer
     bc=bc -l ~/system/scripts/bc/code/funcs.bc
+    disk-down=udisksctl power-off -b
+    randpass=</dev/urandom tr -dc '12345!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB' | head -c16 | xcpsel
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -386,4 +388,16 @@ bc_temp() {
 	ret='F'
     fi
     echo $temp\° $ret
+}
+flac2mp3() {
+	ffmpeg -i $1 -ab 320k -map_metadata 0 -id3v2_version 3 $2
+# find . -name "*.flac" -exec ffmpeg -i {} -ab 160k -map_metadata 0 -id3v2_version 3 {}.mp3 \;
+}
+shuffle_music() {
+	pre=file ;
+	for old in * ;
+		do new=`xxd -l 4 -ps /dev/urandom` ;
+		while [ -f "$pre-$new" ] ; do new=`xxd -l 4 -ps /dev/urandom` ; done ;
+		mv "$old" "$pre-$new.mp3" ;
+	done ;
 }
