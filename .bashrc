@@ -189,6 +189,7 @@ export FZF_ALT_C_COMMAND='fd --type d . $HOME'
 export FZF_ALT_C_OPTS="--preview='cat {}' --preview-window=right:60%:wrap --preview 'tree -C {} | head -200'"
 # making sure installed apps dont screw me over
 export EDITOR=vim
+export doomstore=/run/media/abandon/doomstore
 
 [ -r /usr/share/bash-completion/bash_completion   ] && . /usr/share/bash-completion/bash_completion
 
@@ -412,3 +413,4 @@ shuffle_music() {
 		mv "$old" "$pre-$new.mp3" ;
 	done ;
 }
+# type
