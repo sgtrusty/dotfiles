@@ -126,6 +126,7 @@ done << EOF
     dotupdate=yadm add -u
     dotcommit=yadm commit -m "\$(timestamp)"
     dotpush=GIT_SSH_COMMAND="ssh -o IPQoS=throughput -i /home/abandon/system/git/keys/sgtrusty_rsa" yadm push
+    dotall=dotupdate && dotcommit && dotpush
     updatemirrors=sudo reflector --verbose --latest 200 --protocol http --protocol https --sort rate --save /etc/pacman.d/mirrorlist
     applist=echo AppList -- From official repos: && pacman -Qe && echo AppList -- From Arch User Repository: && pacman -Qm
     nvusage=watch -n 0.5 nvidia-smi
@@ -160,7 +161,8 @@ done << EOF
     randpass=</dev/urandom tr -dc '12345!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB' | head -c15 | xcpsel
     hardwritepaste=sh -c 'sleep 0.5; xdotool type "\$(xclip -o -selection clipboard)"'
     die=sudo kill \`pidof xinit\`
-    respawn=die && startx /usr/bin/xmonad || startx /usr/bin/xmonad
+    respawn=startx /usr/bin/xmonad
+    rm_dupes=comm -13 <(md5sum * | sort | uniq -w 32 -d) <(md5sum * | sort | uniq -w 32 -D) | cut -f 3- -d" " | xargs -d '\\n' gio trash
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
