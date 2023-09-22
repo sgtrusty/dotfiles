@@ -159,7 +159,8 @@ done << EOF
     disk-down=udisksctl power-off -b
     randpass=</dev/urandom tr -dc '12345!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB' | head -c15 | xcpsel
     hardwritepaste=sh -c 'sleep 0.5; xdotool type "\$(xclip -o -selection clipboard)"'
-    selfdelete=sudo kill \`pidof xinit\`
+    die=sudo kill \`pidof xinit\`
+    respawn=x_die && startx /usr/bin/xmonad || startx /usr/bin/xmonad
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
