@@ -9,5 +9,6 @@
   },
   "explorer.confirmDragAndDrop": false,
   "editor.formatOnSave": true,
+  "diffEditor.ignoreTrimWhitespace": false,
   "window.zoomLevel": 1
 }

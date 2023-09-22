@@ -150,12 +150,16 @@ done << EOF
     fjffwork=firejail --private=/home/abandon/system/firejail/ff_work firefox -no-remote &
     fjsr=SURFRAW_graphical_browser="firejail --private=/home/abandon/system/firejail/falkon_lookup falkon" sr 
     fjsr_clean=trash /home/abandon/system/firejail/falkon_lookup; mkdir /home/abandon/system/firejail/falkon_lookup
+    falkon_media=firejail --private=/home/abandon/system/firejail/falkon_vids falkon -no-remote &
+    ff_media=firejail --private=/home/abandon/system/firejail/ff_vids firefox -no-remote &
     ios_mount=ifuse --documents org.videolan.vlc-ios ~/system/ios
     mapview=telnet mapscii.me
     smp=smplayer
     bc=bc -l ~/system/scripts/bc/code/funcs.bc
     disk-down=udisksctl power-off -b
-    randpass=</dev/urandom tr -dc '12345!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB' | head -c16 | xcpsel
+    randpass=</dev/urandom tr -dc '12345!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB' | head -c15 | xcpsel
+    hardwritepaste=sh -c 'sleep 0.5; xdotool type "\$(xclip -o -selection clipboard)"'
+    selfdelete=sudo kill \`pidof xinit\`
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs

@@ -76,3 +76,5 @@ xterm*jumpScroll: on
 !                     Shift <Btn1Up>:            select-end(CLIPBOARD, CUT_BUFFER1) \n\
 !                    ~Shift ~Ctrl ~Meta <Btn2Up>:insert-selection(PRIMARY, CUT_BUFFER0) \n\
 !                     Shift ~Ctrl ~Meta <Btn2Up>:insert-selection(CLIPBOARD, CUT_BUFFER1)
+
+Xcursor.theme: abandon
