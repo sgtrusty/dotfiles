@@ -174,6 +174,8 @@ wsMisc3 = "\61713"
 wsMusic :: String
 wsMusic = "\61884"
 myWorkspaces    = [wsInternet, wsExplorer, wsGames, wsChat, wsCode, wsMisc1, wsMisc2, wsMisc3, wsMusic]
+-- XMonad.Actions.DynamicProjects // XMonad.Actions.TopicSpace
+-- https://stackoverflow.com/questions/45908110/start-applications-on-specific-workspace-if-not-yet-started-there
 
 -- Border colors for unfocused and focused windows, respectively.
 --

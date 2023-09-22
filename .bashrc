@@ -204,6 +204,9 @@ parse_git_branch() {
 # Query package info
 function query {
     case "$1" in
+	upg)
+	    sudo pacman -Syuu | tee -a ~/system/logs/arch-upgrades-$(date +%s)
+	    ;;
         se)
             pacman -Slq | fzf -q "$2" --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S
             ;;
@@ -238,7 +241,7 @@ function query {
             pacman -Qdq | fzf -q "$2" --multi --preview 'pacman -Qi {1}' | xargs -r pacman -Qi
             ;;
         *)
-            echo "Unknown command. Available options: se sel inf infl f2p p2f deps explicit orphans"
+            echo "Unknown command. Available options: upg se sel inf infl f2p p2f deps explicit orphans"
             # echo "Unknown command. Available options: se sel inf infl f2p p2f orphans explicit"
     esac
 }
@@ -278,6 +281,7 @@ function bashrc {
     printf "$fnc_desc" "sockets" "" "Show all currently open tcp and udp sockets"
     printf "$fnc_desc" "yt2mp3" "<video-id> <path/to/ouputfolder>" "Download youtube video and convert to mp3 file"
     printf "$fnc_desc" "query" "<modifier> [optional search term]" "Package querying functions"
+    printf "$fnc_desc_long" "query upg" "[package name]" "Upgrade system while keeping logs"
     printf "$fnc_desc_long" "query se" "[package name]" "Search for pacman/AUR packages online"
     printf "$fnc_desc_long" "query sel" "[package name]" "Search for locally installed packages"
     printf "$fnc_desc_long" "query inf" "[package name]" "Display information of a specified pacman/AUR package"
