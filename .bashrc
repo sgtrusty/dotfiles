@@ -184,12 +184,14 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 alias shh="pkill mpv; pkill mpv"
 # Play online drum and bass radio station.
 alias dnb="shh; mpv --volume=65 --really-quiet https://dnbradio.com/hi.pls"
+alias radio_oldies="shh; mpv --volume=65 http://149.56.185.82:8135/listen.pls | tee ~/tmp/radio.txt"
 # make easier editing
 alias vimrc="$EDITOR $HOME/.vimrc"
 alias resrc="source ~/.bashrc"
 alias bashrc="$EDITOR $HOME/.bashrc && resrc"
 alias alia="$EDITOR $HOME/.bash_aliases"
 alias func="$EDITOR $HOME/.bash_functions"
+trap "mpv --volume=65 --really-quiet  ~/.config/tint2/assets/sounds/kill-window.wav &" EXIT
 
 for sh in /etc/bash/bashrc.d/* ; do
  [[ -r ${sh} ]] && source "${sh}"

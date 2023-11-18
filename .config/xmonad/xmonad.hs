@@ -223,7 +223,7 @@ rofiLauncherAll = spawn "rofi -no-lazy-grab -combi-modi window,run,drun -show co
 mpv = "mpv --volume=65 --really-quiet"
 scrlock_kill = "kill -9 $(cat /tmp/xmonad_scrlock.pid)" 
 
--- Create a modified version of fromList that calls additionalFunction alongside each function in the list
+-- Calls scrlock kill after any ScrollLock + Key combo is pressed
 fromListWithKill :: [(a, X ())] -> [(a, X ())]
 fromListWithKill = map (\(k, f) -> (k, f >> spawn scrlock_kill))
 
@@ -253,7 +253,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((shiftMask,            xK_Print), maimsave) 
 
     , ((0, xK_Scroll_Lock), do
-        spawn $ scrlock_kill ++ "; echo 'Combo Hard Locked' | exec dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta l -w 280 -p 30 & echo $! > /tmp/xmonad_scrlock.pid"
+        spawn $ scrlock_kill ++ "; echo 'Combo Hard Locked' | exec dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta c -w 280 -p 30 & echo $! > /tmp/xmonad_scrlock.pid"
         submap . M.fromList $ fromListWithKill [
             -- Everyday uses
             ((0, xK_Return), spawn (XMonad.terminal conf) >> spawn (mpv ++ " ~/.config/tint2/assets/sounds/new-terminal.wav")) 
@@ -288,7 +288,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
             , ((0, xK_F11), cycleAction "sidebarlaunch" [sidebarlaunch, ewwclose])
         
             -- Macro Modifiers
-            , ((0, xK_Escape), spawn "notify-send 'killed ok :)' || notify-send 'NOK'")
+            , ((0, xK_Escape), spawn "dunstctl close-all && notify-send -t 500 'ok :)' || notify-send 'NOK'")
         
             -- Demo
             , ((0, xK_z),    submap . M.fromList $
