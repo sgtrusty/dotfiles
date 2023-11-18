@@ -221,6 +221,11 @@ maimsave = spawn "maim -s ~/Pictures/screenshot/$(date +%Y-%m-%d_%H-%M-%S).png &
 rofiLauncher = spawn "rofi -no-lazy-grab -show drun -modi run,drun,window -theme $HOME/.config/rofi/launcher/style -drun-icon-theme \"candy-icons\" "
 rofiLauncherAll = spawn "rofi -no-lazy-grab -combi-modi window,run,drun -show combi -modi combi -theme $HOME/.config/rofi/launcher/style -drun-icon-theme \"candy-icons\" "
 mpv = "mpv --volume=65 --really-quiet"
+scrlock_kill = "kill -9 $(cat /tmp/xmonad_scrlock.pid)" 
+
+-- Create a modified version of fromList that calls additionalFunction alongside each function in the list
+fromListWithKill :: [(a, X ())] -> [(a, X ())]
+fromListWithKill = map (\(k, f) -> (k, f >> spawn scrlock_kill))
 
 playSound :: String -> X ()
 playSound param = do
@@ -245,10 +250,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Screenshot
     , ((0,                    xK_Print), maimcopy)
+    , ((shiftMask,            xK_Print), maimsave) 
 
     , ((0, xK_Scroll_Lock), do
-        alertPid <- spawnPID "dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta l -w 280 -p 5 <<< \" Hard scroll lock pressed\""
-        submap . M.fromList $ [
+        spawn $ scrlock_kill ++ "; echo 'Combo Hard Locked' | exec dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta l -w 280 -p 30 & echo $! > /tmp/xmonad_scrlock.pid"
+        submap . M.fromList $ fromListWithKill [
             -- Everyday uses
             ((0, xK_Return), spawn (XMonad.terminal conf) >> spawn (mpv ++ " ~/.config/tint2/assets/sounds/new-terminal.wav")) 
             , ((0,  xK_F1), spawn (mpv ++ " ~/.config/tint2/assets/sounds/lock-screen.wav & betterlockscreen -l && "++mpv++" --volume=65 ~/.config/tint2/assets/sounds/lock-screen-2.wav"))
@@ -271,7 +277,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
             , ((0,  xK_F12), spawn "xmonad --recompile; xmonad --restart")
         
             -- Common keys with modifiers 
-            , ((0,  xK_Print), maimsave)
+            , ((0,  xK_Print), spawn "flameshot gui")
         
             -- Tools, utils
             , ((0,  xK_b), spawn "exec ~/.config/xmonad/scripts/bartoggle")
@@ -282,7 +288,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
             , ((0, xK_F11), cycleAction "sidebarlaunch" [sidebarlaunch, ewwclose])
         
             -- Macro Modifiers
-            , ((0, xK_Escape), spawn "notify-send \"ok :)\"")
+            , ((0, xK_Escape), spawn "notify-send 'killed ok :)' || notify-send 'NOK'")
         
             -- Demo
             , ((0, xK_z),    submap . M.fromList $

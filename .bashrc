@@ -183,7 +183,7 @@ alias freq='cut -f1 -d" " $HOME/.bash_history | sort | uniq -c | sort -nr | head
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 alias shh="pkill mpv; pkill mpv"
 # Play online drum and bass radio station.
-alias dnb="shh; mpv --volume=65 --really-quiet https://dnbradio.com/hi.pls &"
+alias dnb="shh; mpv --volume=65 --really-quiet https://dnbradio.com/hi.pls"
 # make easier editing
 alias vimrc="$EDITOR $HOME/.vimrc"
 alias resrc="source ~/.bashrc"
