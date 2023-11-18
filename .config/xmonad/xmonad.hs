@@ -221,6 +221,11 @@ maimsave = spawn "maim -s ~/Pictures/screenshot/$(date +%Y-%m-%d_%H-%M-%S).png &
 rofiLauncher = spawn "rofi -no-lazy-grab -show drun -modi run,drun,window -theme $HOME/.config/rofi/launcher/style -drun-icon-theme \"candy-icons\" "
 rofiLauncherAll = spawn "rofi -no-lazy-grab -combi-modi window,run,drun -show combi -modi combi -theme $HOME/.config/rofi/launcher/style -drun-icon-theme \"candy-icons\" "
 
+playSound :: String -> X ()
+playSound param = do
+    -- Here, you can use the 'param' string as needed in your XMonad configuration
+    -- For demonstration purposes, let's print the received parameter to the log
+    spawn $ "mpv --volume=65 ~/.config/tint2/assets/sounds/"++param++"/`ls ~/.config/tint2/assets/sounds/"++param++" | shuf -n 1`"
 
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ 
@@ -244,18 +249,19 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         alertPid <- spawnPID "dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta l -w 280 -p 5 <<< \" Hard scroll lock pressed\""
         submap . M.fromList $ [
             -- Everyday uses
-            ((0, xK_Return),    spawn $ XMonad.terminal conf) 
-            , ((0,  xK_F1), spawn "betterlockscreen -l")
+            ((0, xK_Return), spawn (XMonad.terminal conf) >> spawn "mpv --volume=85 ~/.config/tint2/assets/sounds/new-terminal.wav") 
+            , ((0,  xK_F1), spawn "mpv --volume=65 ~/.config/tint2/assets/sounds/lock-screen.wav && betterlockscreen -l && mpv --volume=65 ~/.config/tint2/assets/sounds/lock-screen-2.wav")
             , ((0,  xK_period), spawn "rofimoji")
             , ((shiftMask,  xK_period), spawn "rofimoji --action copy")
-            , ((0,  xK_o), rofiLauncher)
-            , ((shiftMask, xK_o), rofiLauncherAll)
+            , ((0,  xK_F2), rofiLauncher >> playSound "open-menu")
+            , ((0,  xK_o), rofiLauncher >> playSound "open-menu")
+            , ((shiftMask, xK_o), rofiLauncherAll >> playSound "open-menu-all") 
         
             -- Window utils
             -- NOTE: interesting documentation https://hackage.haskell.org/package/xmonad-0.17.2/docs/XMonad-Operations.html
-            --, ((0, xK_q), spawn $ ("kill -9 ") <> show (toInteger alertPid) )
-            , ((0, xK_q), spawn $ ("dzen2 -fg green1 -bg black -w 280 -p 1 <<< ") <> show (toInteger alertPid) )
-            --, ((0, xK_q), kill)
+            --, ((0, xK_q), spawn $ ("kill -9 ") <> show (toInteger alertPid + 1) )
+            --, ((0, xK_q), spawn $ ("dzen2 -fg green1 -bg black -w 280 -p 1 <<< ") <> show (toInteger alertPid + 1) )
+            , ((0, xK_q), kill >> spawn "mpv --volume=65 ~/.config/tint2/assets/sounds/kill-window.wav")
             -- Cycle to last focused window
             , ((0,               xK_Tab   ), nextMatch History (return True))
             -- , ((modm .|. shiftMask, xK_Tab   ), prevMatch History (return True))

@@ -45,7 +45,10 @@ else
     echo -e "\e[37;1m       \/     \/      \/      \/      \/             \/          \/                      \/         |__|         \/  "
 fi
 
-[[ "$PS1" ]] && /usr/bin/fortune | while read line; do if [ -z "${line}" ]; then echo "$line"; else echo -e " \e[39;1m>> \e[90;1m$line \e[39;1m<<"; fi done
+[[ "$PS1" ]] && TODAY_FORTUNE=$(/usr/bin/fortune); echo "$TODAY_FORTUNE" | while read line; do if [ -z "${line}" ]; then echo "$line"; else echo -e " \e[39;1m>> \e[90;1m$line \e[39;1m<<"; fi done
+
+## provisional tts assistant work
+## echo $TODAY_FORTUNE | espeak &
 
 use_color=false
 if type -P dircolors >/dev/null ; then
@@ -169,6 +172,8 @@ done << EOF
     clamscan_full=sudo clamscan / --recursive --exclude-dir="^/sys/" --exclude-dir="^/proc"--exclude-dir="^/dev" | tee clamscan.log
     sys_upgrade=sudo pacman -Syuu | tee pacman-upgrade-\$(date +"%Y%m%d%H%M%S").txt
     forget=unset HISTFILE
+    whatsmyip=curl icanhazip.com
+    dadjoke=command wget -U "curl/7.55.1" -o /dev/null -qO - https://icanhazdadjoke.com || printf "No jokes today"; echo
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
