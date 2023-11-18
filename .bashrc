@@ -178,6 +178,19 @@ EOF
 alias "${aliasargs[@]}"
 unset aliasargs
 
+alias klog="dmesg -t -L=never -l emerg,alert,crit,err,warn --human --nopager"
+alias freq='cut -f1 -d" " $HOME/.bash_history | sort | uniq -c | sort -nr | head -n 30'
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias shh="pkill mpv; pkill mpv"
+# Play online drum and bass radio station.
+alias dnb="shh; mpv --volume=65 --really-quiet https://dnbradio.com/hi.pls &"
+# make easier editing
+alias vimrc="$EDITOR $HOME/.vimrc"
+alias resrc="source ~/.bashrc"
+alias bashrc="$EDITOR $HOME/.bashrc && resrc"
+alias alia="$EDITOR $HOME/.bash_aliases"
+alias func="$EDITOR $HOME/.bash_functions"
+
 for sh in /etc/bash/bashrc.d/* ; do
  [[ -r ${sh} ]] && source "${sh}"
 done
