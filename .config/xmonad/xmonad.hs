@@ -8,6 +8,15 @@
 --
 import XMonad
 
+-- NOTE: xmonad is tab-unfriendly sys
+{-
+in vim, you can do :
+:set tabstop=4
+:set shiftwidth=4
+:set expandtab
+:retab
+-}
+
 import XMonad.Actions.UpdatePointer ( updatePointer )
 import XMonad.Actions.GroupNavigation (nextMatch, historyHook, Direction(History))
 import XMonad.Actions.CycleWS ( nextWS, prevWS, nextScreen, prevScreen )
@@ -243,6 +252,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
             , ((shiftMask, xK_o), rofiLauncherAll)
         
             -- Window utils
+            -- NOTE: interesting documentation https://hackage.haskell.org/package/xmonad-0.17.2/docs/XMonad-Operations.html
             , ((0, xK_q), kill)
             -- Cycle to last focused window
             , ((0,               xK_Tab   ), nextMatch History (return True))
@@ -266,7 +276,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
             , ((0, xK_Escape), spawn "notify-send \"ok :)\"")
         
             -- Demo
-            , ((0, xK_e),    submap . M.fromList $
+            , ((0, xK_z),    submap . M.fromList $
                        [ ((0, xK_f),  spawn "notify-send \"wef combo detected!\"" ) ]
             )
         
@@ -308,7 +318,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
             [((m, k), windows $ f i)
                 | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
                 , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-            -- ++
+            ++
+
+            [((m, key), screenWorkspace sc >>= flip whenJust (windows . f))
+                | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+                , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+
     )
 
     -- lock screen
@@ -386,6 +401,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_q     ), spawn "~/.config/xmonad/scripts/powermenu.sh")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
+    -- NOTE: can use Named Actions, see : https://hackage.haskell.org/package/xmonad-contrib-0.13/docs/src/XMonad-Util-NamedActions.html
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
     ]
     ++
@@ -770,3 +786,5 @@ help = unlines ["The default modifier key is 'super'. Default keybindings:",
     "mod-button1  Set the window to floating mode and move by dragging",
     "mod-button2  Raise the window to the top of the stack",
     "mod-button3  Set the window to floating mode and resize by dragging"]
+
+-- https://wiki.haskell.org/Xmonad/General_xmonad.hs_config_tips
