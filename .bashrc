@@ -14,6 +14,7 @@ shopt -s histappend
 # shopt -s autocd
 # shopt -s globstar
 
+HISTCONTROL=ignoredups
 PROMPT_COMMAND='history -a'
 
 PS1='[\u@\h \W]\$ '
@@ -119,6 +120,7 @@ done << EOF
     dmesg=dmesg --color
     bc=bc -l
     trash=gio trash
+    datestamp=date +"%Y%m%d%H%M%S"
     timestamp=date +%s
     :q=exit
     xcpsel=xclip -sel clip
@@ -166,7 +168,7 @@ done << EOF
     rm_dupes=comm -13 <(md5sum * | sort | uniq -w 32 -d) <(md5sum * | sort | uniq -w 32 -D) | cut -f 3- -d" " | xargs -d '\\n' gio trash
     clamscan_full=sudo clamscan / --recursive --exclude-dir="^/sys/" --exclude-dir="^/proc"--exclude-dir="^/dev" | tee clamscan.log
     sys_upgrade=sudo pacman -Syuu | tee pacman-upgrade-\$(date +"%Y%m%d%H%M%S").txt
-    unsave=unset HISTFILE
+    forget=unset HISTFILE
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
