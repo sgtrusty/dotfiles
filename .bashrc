@@ -166,6 +166,7 @@ done << EOF
     rm_dupes=comm -13 <(md5sum * | sort | uniq -w 32 -d) <(md5sum * | sort | uniq -w 32 -D) | cut -f 3- -d" " | xargs -d '\\n' gio trash
     clamscan_full=sudo clamscan / --recursive --exclude-dir="^/sys/" --exclude-dir="^/proc"--exclude-dir="^/dev" | tee clamscan.log
     sys_upgrade=sudo pacman -Syuu | tee pacman-upgrade-\$(date +"%Y%m%d%H%M%S").txt
+    unsave=unset HISTFILE
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs

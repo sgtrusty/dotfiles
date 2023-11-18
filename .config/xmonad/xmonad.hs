@@ -9,13 +9,13 @@
 import XMonad
 
 -- NOTE: xmonad is tab-unfriendly sys
-{-
+{--
 in vim, you can do :
-:set tabstop=4
-:set shiftwidth=4
-:set expandtab
-:retab
--}
+set tabstop=4
+set shiftwidth=4
+set expandtab
+retab
+--}
 
 import XMonad.Actions.UpdatePointer ( updatePointer )
 import XMonad.Actions.GroupNavigation (nextMatch, historyHook, Direction(History))
@@ -234,14 +234,14 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0,                    xF86XK_AudioMute), spawn "pactl set-sink-mute 0 toggle")
 
     -- Brightness keys
-    , ((0,                    xF86XK_MonBrightnessUp), spawn "xbacklight -inc +10")
-    , ((0,                    xF86XK_MonBrightnessDown), spawn "xbacklight -dec 10")
+    , ((0,                    xF86XK_MonBrightnessUp), spawn "((($(xbacklight -get) >= 10)) && xbacklight -inc +10) || ((($(xbacklight -get) == 9)) && xbacklight -inc +1 && redshift -x) || xbacklight -inc +1")
+    , ((0,                    xF86XK_MonBrightnessDown), spawn "((($(xbacklight -get) > 10)) && xbacklight -dec 10) || ((($(xbacklight -get) == 8)) && redshift -x && redshift -O 1750 && xbacklight -dec 1) || ((($(xbacklight -get) > 1)) && xbacklight -dec 1) || xbacklight -set 1")
 
     -- Screenshot
     , ((0,                    xK_Print), maimcopy)
 
     , ((0, xK_Scroll_Lock), do
-        spawn $ "dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta l -w 280 -p 5 <<< \" Hard scroll lock pressed\""
+        alertPid <- spawnPID "dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta l -w 280 -p 5 <<< \" Hard scroll lock pressed\""
         submap . M.fromList $ [
             -- Everyday uses
             ((0, xK_Return),    spawn $ XMonad.terminal conf) 
@@ -253,7 +253,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         
             -- Window utils
             -- NOTE: interesting documentation https://hackage.haskell.org/package/xmonad-0.17.2/docs/XMonad-Operations.html
-            , ((0, xK_q), kill)
+            --, ((0, xK_q), spawn $ ("kill -9 ") <> show (toInteger alertPid) )
+            , ((0, xK_q), spawn $ ("dzen2 -fg green1 -bg black -w 280 -p 1 <<< ") <> show (toInteger alertPid) )
+            --, ((0, xK_q), kill)
             -- Cycle to last focused window
             , ((0,               xK_Tab   ), nextMatch History (return True))
             -- , ((modm .|. shiftMask, xK_Tab   ), prevMatch History (return True))
@@ -788,3 +790,11 @@ help = unlines ["The default modifier key is 'super'. Default keybindings:",
     "mod-button3  Set the window to floating mode and resize by dragging"]
 
 -- https://wiki.haskell.org/Xmonad/General_xmonad.hs_config_tips
+
+-- futures:
+{-
+https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Actions-TopicSpace.html
+https://www.reddit.com/r/xmonad/comments/xck4r4/does_anybody_use_greedyview/
+-- sort ws by last frequent use?
+-- asociate topics to: vscoding, exploring (ranger/nemo), games, vm's, online activity, messaging
+-}
