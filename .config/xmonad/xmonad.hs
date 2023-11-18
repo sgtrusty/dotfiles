@@ -228,40 +228,60 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0,                    xF86XK_MonBrightnessUp), spawn "xbacklight -inc +10")
     , ((0,                    xF86XK_MonBrightnessDown), spawn "xbacklight -dec 10")
 
-    -- launch a terminal
-    , ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
- 
     -- Screenshot
     , ((0,                    xK_Print), maimcopy)
-    , ((modm,                 xK_Print), maimsave)
 
-    , ((0, xK_Super_R), submap . M.fromList $
-      [ ((0, xK_e),    submap . M.fromList $
-        [ ((0, xK_f),  spawn "notify-send \"wef combo detected!\"" ) ])
+    , ((0, xK_Scroll_Lock), submap . M.fromList $
+      [
+	-- Everyday uses
+	((0, xK_Return),    spawn $ XMonad.terminal conf) 
+	, ((0,  xK_F1), spawn "betterlockscreen -l")
+	, ((0,  xK_period), spawn "rofimoji")
+	, ((shiftMask,  xK_period), spawn "rofimoji --action copy")
+	, ((0,  xK_o), rofiLauncher)
+	, ((shiftMask, xK_o), rofiLauncherAll)
+
+	-- Window utils
+	, ((0, xK_q), kill)
+
+	-- Restart xmonad
+	, ((0,  xK_F12), spawn "xmonad --recompile; xmonad --restart")
+
+	-- Common keys with modifiers 
+	, ((0,  xK_Print), maimsave)
+
+	-- Tools, utils
+	, ((0,  xK_b), spawn "exec ~/.config/xmonad/scripts/bartoggle")
+	, ((0,  xK_d), spawn "exec ~/.config/xmonad/scripts/do_not_disturb.sh")
+
+	-- WIP
+	, ((0, xK_F10), cycleAction "centerlaunch" [centerlaunch, ewwclose])
+	, ((0, xK_F11), cycleAction "sidebarlaunch" [sidebarlaunch, ewwclose])
+
+	-- Macro Modifiers
+	, ((0, xK_Escape), spawn "notify-send \"ok :)\"")
+
+	-- Demo
+	, ((0, xK_e),    submap . M.fromList $
+       		[ ((0, xK_f),  spawn "notify-send \"wef combo detected!\"" ) ]
+	)
+
+	-- Layouts
+	-- Rotate through the available layout algorithms
+	, ((0, xK_space ), sendMessage NextLayout >> spawn "xdotool key Scroll_Lock")
+	-- Browse available layouts in rofi
+	, ((controlMask, xK_space ), runSelectedAction "layout" laySels)
+	--  Reset the layouts on the current workspace to default
+	, ((shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
+
       ])
 
     -- lock screen
-    , ((modm,               xK_F1    ), spawn "betterlockscreen -l")
 
     -- launch rofi and dashboard
-    , ((modm,               xK_period), spawn "rofimoji")
-    , ((modm,               xK_o     ), rofiLauncher)
-    , ((modm .|. shiftMask, xK_o     ), rofiLauncherAll)
-    -- launch eww centerbar
-    , ((modm,               xK_p     ), cycleAction "centerlaunch" [centerlaunch, ewwclose])
-    -- launch eww sidebar
-    , ((modm,               xK_s     ), cycleAction "sidebarlaunch" [sidebarlaunch, ewwclose])
-
     -- My Stuff
-    , ((modm,               xK_b     ), spawn "exec ~/.config/xmonad/scripts/bartoggle")
     , ((modm,               xK_z     ), spawn "exec ~/.config/xmonad/scripts/inhibit_activate")
     , ((modm .|. shiftMask, xK_z     ), spawn "exec ~/.config/xmonad/scripts/inhibit_deactivate")
-    --, ((modm .|. shiftMask, xK_a     ), clipboardy)
-    -- Turn do not disturb on and off
-    , ((modm,               xK_d     ), spawn "exec ~/.config/xmonad/scripts/do_not_disturb.sh")
-
-    -- close focused window
-    , ((modm .|. shiftMask, xK_c     ), kill)
 
     -- GAPS!!!
     , ((modm,               xK_g), sendMessage $ ToggleGaps)               -- toggle all gaps
@@ -283,10 +303,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_u), sendMessage ShrinkSlave) -- %! Shrink a slave area
     , ((modm,               xK_i), sendMessage ExpandSlave) -- %! Expand a slave area
 
-     -- Rotate through the available layout algorithms
-    , ((modm,               xK_space ), runSelectedAction "layout" laySels)
-    , ((modm .|. controlMask, xK_space ), sendMessage NextLayout)
-
     -- https://www.reddit.com/r/xmonad/comments/npdtxs/toggle_full_screen_in_xmonad/
     -- , ((modm,               xK_f     ), toggleFull)
     , ((modm,               xK_f     ), toggleFloatFull)
@@ -300,9 +316,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         -- sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]
         sendMessage $ JumpToLayout "Tiled"
     ])
-
-    --  Reset the layouts on the current workspace to default
-    , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
 
     -- Resize viewed windows to the correct size
     , ((modm,               xK_n     ), refresh)
@@ -323,7 +336,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_m     ), windows W.focusMaster  )
 
     -- Swap the focused window and the master window
-    , ((modm,               xK_Return), windows W.swapMaster)
+    , ((modm .|. shiftMask, xK_Return), windows W.swapMaster)
 
     -- Swap the focused window with the next window
     , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  )
@@ -354,9 +367,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), spawn "~/.config/xmonad/scripts/powermenu.sh")
-
-    -- Restart xmonad
-    , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart")
 
     -- Run xmessage with a summary of the default keybindings (useful for beginners)
     , ((modm .|. shiftMask, xK_slash ), spawn ("echo \"" ++ help ++ "\" | xmessage -file -"))
@@ -419,7 +429,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     -- , ((modm, 9), \_ -> spawn "notify-send \"mousemod 9\"" )
     -- , ((0, 9), \_ -> spawn "xdotool keydown Super_R")
     -- , ((modm, 9), \_ -> spawn "xdotool keydown Super_R")
-    , ((0, 9), \_ -> cycleAction "mouseshake" [spawn "~/system/scripts/mouse-shake.sh", spawn "pkill mouse-shake.sh"])
+    -- , ((0, 9), \_ -> cycleAction "mouseshake" [spawn "~/system/scripts/mouse-shake.sh", spawn "pkill mouse-shake.sh"])
     , ((0, 8), \_ -> spawn "xdotool keydown Super_R && sleep 5 && xdotool keyup Super_R")
     , ((modm, 8), \_ -> spawn "xdotool keyup Super_R")
     -- , ((0, 9), \_ -> spawn "xdotool keydown Super_R")
@@ -685,7 +695,7 @@ help :: String
 help = unlines ["The default modifier key is 'super'. Default keybindings:",
     "",
     "-- launching and killing programs",
-    "mod-Shift-Enter  Launch xterminal",
+    "mod-Enter  Launch xterminal",
     "mod-p            Launch dmenu",
     "mod-Shift-p      Launch gmrun",
     "mod-Shift-c      Close/kill the focused window",
