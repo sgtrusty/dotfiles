@@ -231,50 +231,85 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Screenshot
     , ((0,                    xK_Print), maimcopy)
 
-    , ((0, xK_Scroll_Lock), submap . M.fromList $
-      [
-	-- Everyday uses
-	((0, xK_Return),    spawn $ XMonad.terminal conf) 
-	, ((0,  xK_F1), spawn "betterlockscreen -l")
-	, ((0,  xK_period), spawn "rofimoji")
-	, ((shiftMask,  xK_period), spawn "rofimoji --action copy")
-	, ((0,  xK_o), rofiLauncher)
-	, ((shiftMask, xK_o), rofiLauncherAll)
-
-	-- Window utils
-	, ((0, xK_q), kill)
-
-	-- Restart xmonad
-	, ((0,  xK_F12), spawn "xmonad --recompile; xmonad --restart")
-
-	-- Common keys with modifiers 
-	, ((0,  xK_Print), maimsave)
-
-	-- Tools, utils
-	, ((0,  xK_b), spawn "exec ~/.config/xmonad/scripts/bartoggle")
-	, ((0,  xK_d), spawn "exec ~/.config/xmonad/scripts/do_not_disturb.sh")
-
-	-- WIP
-	, ((0, xK_F10), cycleAction "centerlaunch" [centerlaunch, ewwclose])
-	, ((0, xK_F11), cycleAction "sidebarlaunch" [sidebarlaunch, ewwclose])
-
-	-- Macro Modifiers
-	, ((0, xK_Escape), spawn "notify-send \"ok :)\"")
-
-	-- Demo
-	, ((0, xK_e),    submap . M.fromList $
-       		[ ((0, xK_f),  spawn "notify-send \"wef combo detected!\"" ) ]
-	)
-
-	-- Layouts
-	-- Rotate through the available layout algorithms
-	, ((0, xK_space ), sendMessage NextLayout >> spawn "xdotool key Scroll_Lock")
-	-- Browse available layouts in rofi
-	, ((controlMask, xK_space ), runSelectedAction "layout" laySels)
-	--  Reset the layouts on the current workspace to default
-	, ((shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
-
-      ])
+    , ((0, xK_Scroll_Lock), do
+        spawn $ "dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta l -w 280 -p 5 <<< \" Hard scroll lock pressed\""
+        submap . M.fromList $ [
+            -- Everyday uses
+            ((0, xK_Return),    spawn $ XMonad.terminal conf) 
+            , ((0,  xK_F1), spawn "betterlockscreen -l")
+            , ((0,  xK_period), spawn "rofimoji")
+            , ((shiftMask,  xK_period), spawn "rofimoji --action copy")
+            , ((0,  xK_o), rofiLauncher)
+            , ((shiftMask, xK_o), rofiLauncherAll)
+        
+            -- Window utils
+            , ((0, xK_q), kill)
+            -- Cycle to last focused window
+            , ((0,               xK_Tab   ), nextMatch History (return True))
+            -- , ((modm .|. shiftMask, xK_Tab   ), prevMatch History (return True))
+        
+            -- Restart xmonad
+            , ((0,  xK_F12), spawn "xmonad --recompile; xmonad --restart")
+        
+            -- Common keys with modifiers 
+            , ((0,  xK_Print), maimsave)
+        
+            -- Tools, utils
+            , ((0,  xK_b), spawn "exec ~/.config/xmonad/scripts/bartoggle")
+            , ((0,  xK_d), spawn "exec ~/.config/xmonad/scripts/do_not_disturb.sh")
+        
+            -- WIP
+            , ((0, xK_F10), cycleAction "centerlaunch" [centerlaunch, ewwclose])
+            , ((0, xK_F11), cycleAction "sidebarlaunch" [sidebarlaunch, ewwclose])
+        
+            -- Macro Modifiers
+            , ((0, xK_Escape), spawn "notify-send \"ok :)\"")
+        
+            -- Demo
+            , ((0, xK_e),    submap . M.fromList $
+                       [ ((0, xK_f),  spawn "notify-send \"wef combo detected!\"" ) ]
+            )
+        
+            -- Layouts
+            -- Move focus to the next window
+            , ((0,               xK_KP_Subtract), windows W.focusDown)
+                , ((0,               xK_Page_Down), windows W.focusDown)
+            -- Move focus to the previous window
+            , ((0,               xK_KP_Add), windows W.focusUp)
+                , ((0,               xK_Page_Up), windows W.focusUp)
+            -- Rotate through the available layout algorithms
+            , ((0, xK_space ), sendMessage NextLayout >> spawn "xdotool key Scroll_Lock")
+            -- Browse available layouts in rofi
+            , ((controlMask, xK_space ), runSelectedAction "layout" laySels)
+            --  Reset the layouts on the current workspace to default
+            , ((shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
+            -- https://www.reddit.com/r/xmonad/comments/npdtxs/toggle_full_screen_in_xmonad/
+            -- , ((modm,               xK_f     ), toggleFull)
+            , ((0, xK_f), toggleFloatFull)
+            --, ((modm,               xK_f     ), withFocused (sendMessage . maximizeRestore))
+            , ((shiftMask, xK_f), cycleAction "cycleFullscreen" [
+                do
+                    windows W.swapMaster
+                    -- sendMessage $ setGaps [(L,0), (R,0), (U,0), (D,0)]
+                    sendMessage $ JumpToLayout "Full",
+                do
+                    -- sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]
+                    sendMessage $ JumpToLayout "Tiled"
+                ])
+        
+            ]
+            ++
+        
+            [((m, k), windows $ f i)
+                | (i, k) <- zip (XMonad.workspaces conf) numPadKeys 
+                , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+            ++
+            
+            [((m, k), windows $ f i)
+                | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
+                , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+            -- ++
+    )
 
     -- lock screen
 
@@ -303,26 +338,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm,               xK_u), sendMessage ShrinkSlave) -- %! Shrink a slave area
     , ((modm,               xK_i), sendMessage ExpandSlave) -- %! Expand a slave area
 
-    -- https://www.reddit.com/r/xmonad/comments/npdtxs/toggle_full_screen_in_xmonad/
-    -- , ((modm,               xK_f     ), toggleFull)
-    , ((modm,               xK_f     ), toggleFloatFull)
-    --, ((modm,               xK_f     ), withFocused (sendMessage . maximizeRestore))
-    , ((modm .|. shiftMask,               xK_f     ), cycleAction "cycleFullscreen" [
-      do
-        windows W.swapMaster
-        -- sendMessage $ setGaps [(L,0), (R,0), (U,0), (D,0)]
-        sendMessage $ JumpToLayout "Full",
-      do
-        -- sendMessage $ setGaps [(L,30), (R,30), (U,40), (D,40)]
-        sendMessage $ JumpToLayout "Tiled"
-    ])
-
     -- Resize viewed windows to the correct size
     , ((modm,               xK_n     ), refresh)
-
-    -- Move focus to the next window
-    , ((modm,               xK_Tab   ), nextMatch History (return True))
-    -- , ((modm .|. shiftMask, xK_Tab   ), prevMatch History (return True))
 
     -- Move focus to the next window
     , ((modm,               xK_j     ), windows W.focusDown)
@@ -374,6 +391,15 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     ++
 
     --
+    -- mod-Numpad[1..9], Switch to workspace N
+    -- mod-shift-Numpad[1..9], Move client to workspace N
+    --
+    [((m .|. modm, k), windows $ f i)
+        | (i, k) <- zip (XMonad.workspaces conf) numPadKeys 
+        , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
+    ++
+
+    --
     -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
     --
@@ -390,6 +416,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
 
+numPadKeys = [ xK_KP_End,  xK_KP_Down,  xK_KP_Page_Down -- 1, 2, 3
+             , xK_KP_Left, xK_KP_Begin, xK_KP_Right     -- 4, 5, 6
+             , xK_KP_Home, xK_KP_Up,    xK_KP_Page_Up   -- 7, 8, 9
+             , xK_KP_Insert] -- 0
 
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events
@@ -515,7 +545,7 @@ myDynamicHook = composeAll . concat $
       , [isFullscreen --> doFullFloat]
         -- className =? "smplayer"       --> doFloat,
       , [className =? c --> doFloat | c <- myFloatClasses]
-	    , [resource  =? r --> doIgnore | r <- myIgnoreResources]
+        , [resource  =? r --> doIgnore | r <- myIgnoreResources]
       , [className =? "smplayer"       --> hasBorder False]
       , [viewShiftClasses]
       , [shiftClasses]
@@ -534,7 +564,7 @@ myDynamicHook = composeAll . concat $
       -- , floating --> doF W.shiftMaster
     ]
     where
-        myFloatClasses = ["Gimp-2.10", "tint2"]
+        myFloatClasses = ["tint2"] -- removed Gimp-2.10
         myIgnoreResources = ["desktop", "kdesktop", "desktop_window", "notify-osd", "stalonetray", "trayer"]
         windowAction a w = withDisplay $ \d -> io $ a d w
         windowActionHook a = ask >>= \w -> liftX (a w) >> idHook
