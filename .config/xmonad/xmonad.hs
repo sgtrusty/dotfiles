@@ -252,11 +252,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0,                    xK_Print), maimcopy)
     , ((shiftMask,            xK_Print), maimsave) 
 
+    --, ((0, xK_Super_L ), spawn "xdotool key Scroll_Lock") 
+
     , ((0, xK_Scroll_Lock), do
         spawn $ scrlock_kill ++ "; echo 'Combo Hard Locked' | exec dzen2 -fg green1 -bg black -x 1620 -y 1045 -l 22 -ta c -w 280 -p 30 & echo $! > /tmp/xmonad_scrlock.pid"
         submap . M.fromList $ fromListWithKill [
             -- Everyday uses
-            ((0, xK_Return), spawn (XMonad.terminal conf) >> spawn (mpv ++ " ~/.config/tint2/assets/sounds/new-terminal.wav")) 
+            ((0, xK_Return), spawn (XMonad.terminal conf)) 
             , ((0,  xK_F1), spawn (mpv ++ " ~/.config/tint2/assets/sounds/lock-screen.wav & betterlockscreen -l && "++mpv++" --volume=65 ~/.config/tint2/assets/sounds/lock-screen-2.wav"))
             , ((0,  xK_period), spawn "rofimoji")
             , ((shiftMask,  xK_period), spawn "rofimoji --action copy")
@@ -274,7 +276,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
             -- , ((modm .|. shiftMask, xK_Tab   ), prevMatch History (return True))
         
             -- Restart xmonad
-            , ((0,  xK_F12), spawn "xmonad --recompile; xmonad --restart")
+            , ((0,  xK_F12), playSound "reload-cfg" >> spawn "xmonad --recompile; xmonad --restart;")
         
             -- Common keys with modifiers 
             , ((0,  xK_Print), spawn "flameshot gui")

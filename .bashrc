@@ -176,6 +176,7 @@ done << EOF
     dadjoke=command wget -U "curl/7.55.1" -o /dev/null -qO - https://icanhazdadjoke.com || printf "No jokes today"; echo
     fzfsys=echo system/\$(2>/dev/null 1>/dev/null pushd system/ && fzf; 2>/dev/null 1>/dev/null popd)
     crawl=cd \$(fzfsys)
+    lastnote=vim \$(ls | sort | tail -n1)
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -194,6 +195,7 @@ alias bashrc="$EDITOR $HOME/.bashrc && resrc"
 alias alia="$EDITOR $HOME/.bash_aliases"
 alias func="$EDITOR $HOME/.bash_functions"
 trap "mpv --volume=65 --really-quiet  ~/.config/tint2/assets/sounds/kill-window.wav &" EXIT
+bash -c "mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/new-terminal.wav > /dev/null 2>&1 &" &
 
 for sh in /etc/bash/bashrc.d/* ; do
  [[ -r ${sh} ]] && source "${sh}"
