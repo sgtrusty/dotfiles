@@ -174,6 +174,8 @@ done << EOF
     forget=unset HISTFILE
     whatsmyip=curl icanhazip.com
     dadjoke=command wget -U "curl/7.55.1" -o /dev/null -qO - https://icanhazdadjoke.com || printf "No jokes today"; echo
+    fzfsys=echo system/\$(2>/dev/null 1>/dev/null pushd system/ && fzf; 2>/dev/null 1>/dev/null popd)
+    crawl=cd \$(fzfsys)
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -438,5 +440,23 @@ shuffle_music() {
 		while [ -f "$pre-$new" ] ; do new=`xxd -l 4 -ps /dev/urandom` ; done ;
 		mv "$old" "$pre-$new.mp3" ;
 	done ;
+}
+mknotes() {
+	echo -e "# $1\n\n## content" >> $(datestamp)-$1.md
+}
+function ranger {
+    local IFS=$'\t\n'
+    local tempfile="$(mktemp -t tmp.XXXXXX)"
+    local ranger_cmd=(
+        command
+        ranger
+        --cmd="map :q chain shell echo %d > "$tempfile"; quitall"
+    )
+    
+    ${ranger_cmd[@]} "$@"
+    if [[ -f "$tempfile" ]] && [[ "$(cat -- "$tempfile")" != "$(echo -n `pwd`)" ]]; then
+        cd -- "$(cat "$tempfile")" || return
+    fi
+    command rm -f -- "$tempfile" 2>/dev/null
 }
 # type
