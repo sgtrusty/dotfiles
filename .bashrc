@@ -195,7 +195,7 @@ alias bashrc="$EDITOR $HOME/.bashrc && resrc"
 alias alia="$EDITOR $HOME/.bash_aliases"
 alias func="$EDITOR $HOME/.bash_functions"
 trap "mpv --volume=65 --really-quiet  ~/.config/tint2/assets/sounds/kill-window.wav &" EXIT
-bash -c "mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/new-terminal.wav > /dev/null 2>&1 &" &
+2>/dev/null 1>/dev/null bash -c "mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/new-terminal.wav > /dev/null 2>&1 &" &
 
 for sh in /etc/bash/bashrc.d/* ; do
  [[ -r ${sh} ]] && source "${sh}"
