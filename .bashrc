@@ -139,7 +139,8 @@ done << EOF
     cclean=sudo paccache -rk3 && sudo pacman -Sc --noconfirm && yay -Sc --noconfirm
     psg=ps aux | grep -v grep | grep -i -e VSZ -e
     hdmi=sudo envycontrol -s nvidia --rtd3
-    hdmi_bg=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1' && exec feh --bg-fill Pictures/bg/bg.png
+    hdmi_bg=xrandr --output HDMI-1-0 --right-of eDP --mode 1440x900 --auto && exec feh --bg-fill ~/Pictures/bg/bg.png
+    hdmi_bg2=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --auto --set 'PRIME Synchronization' '1' && exec feh --bg-fill Pictures/bg/bg.png
     hdmi_monitors=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --primary && xrandr --output HDMI-0 --right-of eDP-1-0 --mode 1280x800 --auto && exec feh --bg-fill Pictures/bg/bg.png 
     hdmi_monitors_off=xrandr --output HDMI-0 --off
     hdmi_off=xrandr --output HDMI-1-0 --off
@@ -177,6 +178,7 @@ done << EOF
     fzfsys=echo system/\$(2>/dev/null 1>/dev/null pushd system/ && fzf; 2>/dev/null 1>/dev/null popd)
     crawl=cd \$(fzfsys)
     lastnote=vim \$(ls | sort | tail -n1)
+    dnd=~/.config/xmonad/scripts/do_not_disturb.sh
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -196,6 +198,7 @@ alias alia="$EDITOR $HOME/.bash_aliases"
 alias func="$EDITOR $HOME/.bash_functions"
 trap "mpv --volume=65 --really-quiet  ~/.config/tint2/assets/sounds/kill-window.wav &" EXIT
 2>/dev/null 1>/dev/null bash -c "mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/new-terminal.wav > /dev/null 2>&1 &" &
+disown
 
 for sh in /etc/bash/bashrc.d/* ; do
  [[ -r ${sh} ]] && source "${sh}"
@@ -462,3 +465,6 @@ function ranger {
     command rm -f -- "$tempfile" 2>/dev/null
 }
 # type
+#function xp () { echo -e $(xclip -o -sel clip) >> $1; }
+function xp () { echo -e $(xclip -o) >> $1; }
+function keygen() { ssh-keygen -t rsa -b 4096 -f $PWD/id_$1; }
