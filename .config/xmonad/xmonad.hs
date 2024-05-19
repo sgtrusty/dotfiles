@@ -29,7 +29,7 @@ import XMonad.ManageHook ( liftX )
 import XMonad.Util.ActionCycle
 import XMonad.Util.Run ( runProcessWithInput )
 import XMonad.Util.SpawnOnce ( spawnOnce )
-import XMonad.Util.Ungrab
+import XMonad.Operations ( unGrab )
 
 import XMonad.Hooks.EwmhDesktops ( ewmh )
 import XMonad.Hooks.ManageDocks
@@ -39,7 +39,7 @@ import XMonad.Hooks.RefocusLast ( isFloat)
 
 import XMonad.Layout.Accordion (Accordion(Accordion))
 import XMonad.Layout.BoringWindows (boringWindows, focusUp, focusDown)
-import XMonad.Layout.Circle
+import XMonad.Layout.CircleEx
 import XMonad.Layout.Fullscreen
     ( fullscreenEventHook, fullscreenManageHook, fullscreenSupport, fullscreenFull )
 import XMonad.Layout.Gaps
@@ -259,6 +259,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         submap . M.fromList $ fromListWithKill [
             -- Everyday uses
             ((0, xK_Return), spawn (XMonad.terminal conf)) 
+            ,((0, xK_F3), spawn (XMonad.terminal conf)) 
             , ((0,  xK_F1), spawn (mpv ++ " ~/.config/tint2/assets/sounds/lock-screen.wav & betterlockscreen -l && "++mpv++" --volume=65 ~/.config/tint2/assets/sounds/lock-screen-2.wav"))
             , ((0,  xK_period), spawn "rofimoji")
             , ((shiftMask,  xK_period), spawn "rofimoji --action copy")
@@ -518,7 +519,7 @@ myLayout = --avoidStruts
         ||| renamed [Replace "Mirror"]   ( smartBorders . maximize . minimize . boringWindows $ mouseResizableTileMirrored )
         ||| renamed [Replace "Acordion"] ( smartBorders . maximize . minimize . boringWindows $ Accordion )
         ||| renamed [Replace "Simple"]   ( smartBorders . maximize . minimize . boringWindows $  simpleFloat )
-        ||| renamed [Replace "Circle"]     ( smartBorders . maximize . minimize . boringWindows . magnifiercz 1.15 . magicFocus $ Circle )
+        ||| renamed [Replace "Circle"]     ( smartBorders . maximize . minimize . boringWindows . magnifiercz 1.15 . magicFocus $ circleEx )
         -- ||| renamed [Replace "Mirror"] ( common $ Mirror tiled )
         -- ||| renamed [Replace "Tiled"] ( common tiled )
         -- ||| renamed [Replace "Acordion"] ( common Accordion )

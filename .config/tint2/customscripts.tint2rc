@@ -63,8 +63,8 @@ scale_relative_to_screen_height = 0
 # Battery
 battery_tooltip = 1
 battery_low_status = 10
-battery_low_cmd = notify-send -i ~/.config/tint2/assets/images/battery-low.png "Battery" "Critical (10%)" && mpv ~/.config/tint2/assets/sounds/battery-low.wav &> /dev/null
-battery_full_cmd = notify-send -i ~/.config/tint2/assets/images/battery-full.png "Battery" "It's Full!!!" && mpv ~/.config/tint2/assets/sounds/battery-full.wav &> /dev/null
+battery_low_cmd = notify-send -i ~/.config/tint2/assets/images/battery-low.png "Battery" "Critical (10%)" && mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/battery-low.wav
+battery_full_cmd = notify-send -i ~/.config/tint2/assets/images/battery-full.png "Battery" "It's Full\!\!\!" && mpv --volume=45 --really-quiet ~/.config/tint2/assets/sounds/battery-full.wav
 battery_font_color = #ffffff 100
 bat1_format = %p %s
 bat2_format = 
@@ -76,8 +76,8 @@ battery_rclick_command =
 battery_mclick_command = 
 battery_uwheel_command = 
 battery_dwheel_command = 
-ac_connected_cmd = notify-send -i ~/.config/tint2/assets/images/battery-charging.png "Battery Charging" "Life Saved" && mpv ~/.config/tint2/assets/sounds/charger-on.wav &> /dev/null
-ac_disconnected_cmd = notify-send -i ~/.config/tint2/assets/images/battery-charged.png "Battery Discharging" "Be Veeery Careful" && mpv ~/.config/tint2/assets/sounds/charger-off.wav &> /dev/null
+ac_connected_cmd = notify-send -i ~/.config/tint2/assets/images/battery-charging.png "Battery Charging" "Life Saved" && mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/charger-on.wav
+ac_disconnected_cmd = notify-send -i ~/.config/tint2/assets/images/battery-charged.png "Battery Discharging" "Be Veeery Careful" && mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/charger-off.wav 
 
 #-------------------------------------
 # Separator 1

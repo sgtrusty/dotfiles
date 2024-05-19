@@ -144,7 +144,6 @@ done << EOF
     hdmi_monitors=xrandr --output eDP-1-0 --left-of HDMI-0 --mode 1920x1080 --primary && xrandr --output HDMI-0 --right-of eDP-1-0 --mode 1280x800 --auto && exec feh --bg-fill Pictures/bg/bg.png 
     hdmi_monitors_off=xrandr --output HDMI-0 --off
     hdmi_off=xrandr --output HDMI-1-0 --off
-    wine=echo 'Logging in to wine through docker...' && su docker -c 'cd /home/shared/wine && ./docker.wine.sh'
     kbfixme=setxkbmap 'us(altgr-intl),es' -option grp:alt_shift_toggle
     docker-kill-all=confirm "kill all docker containers?" && sudo -i -u docker docker rm \$(sudo -i -u docker docker ps --filter status=exited -q)
     docker-hard-prune=confirm "Do you want to prune all docker images & data?" && sudo -i -u docker docker system prune --all --force
@@ -170,7 +169,7 @@ done << EOF
     die=sudo kill \`pidof xinit\`
     respawn=startx /usr/bin/xmonad
     rm_dupes=comm -13 <(md5sum * | sort | uniq -w 32 -d) <(md5sum * | sort | uniq -w 32 -D) | cut -f 3- -d" " | xargs -d '\\n' gio trash
-    clamscan_full=sudo clamscan / --recursive --exclude-dir="^/sys/" --exclude-dir="^/proc"--exclude-dir="^/dev" | tee clamscan.log
+    clamscan_full=sudo clamscan / --recursive --exclude-dir="^/sys/" --exclude-dir="^/proc"--exclude-dir="^/dev" | tee ~/system/logs/clamscan-\$(datestamp).log
     sys_upgrade=sudo pacman -Syuu | tee pacman-upgrade-\$(date +"%Y%m%d%H%M%S").txt
     forget=unset HISTFILE
     whatsmyip=curl icanhazip.com
@@ -179,6 +178,9 @@ done << EOF
     crawl=cd \$(fzfsys)
     lastnote=vim \$(ls | sort | tail -n1)
     dnd=~/.config/xmonad/scripts/do_not_disturb.sh
+    wine-clean=pkill .+.exe && pkill wineserver && pkill winedbg
+    wine=sudo mount -o loop $doomstore/vm/wine/arch-linux-bootstrap/arch-bootstrap-20240112210613.img /mnt && xhost +local: && sudo arch-chroot -u arch /mnt bash -c "HOME=/home/arch; cd; bash" && wine-clean && sleep 5 && sudo umount -R /mnt && xhost -
+    ferdium=firejail --nosound --private-dev ferdium --no-sandbox
 EOF
 alias "${aliasargs[@]}"
 unset aliasargs
@@ -196,8 +198,8 @@ alias resrc="source ~/.bashrc"
 alias bashrc="$EDITOR $HOME/.bashrc && resrc"
 alias alia="$EDITOR $HOME/.bash_aliases"
 alias func="$EDITOR $HOME/.bash_functions"
-trap "mpv --volume=65 --really-quiet  ~/.config/tint2/assets/sounds/kill-window.wav &" EXIT
-2>/dev/null 1>/dev/null bash -c "mpv --volume=65 --really-quiet ~/.config/tint2/assets/sounds/new-terminal.wav > /dev/null 2>&1 &" &
+trap "mpv --volume=35 --really-quiet  ~/.config/tint2/assets/sounds/kill-window.wav &" EXIT
+2>/dev/null 1>/dev/null bash -c "mpv --volume=35 --really-quiet ~/.config/tint2/assets/sounds/new-terminal.wav > /dev/null 2>&1 &" &
 disown
 
 for sh in /etc/bash/bashrc.d/* ; do
@@ -375,6 +377,7 @@ wget_site() {
     fi
 
     #wget --recursive --convert-links --restrict-file-names=unix --domains $domain --no-parent $1 
+    #wget --content-disposition -Nrp --no-parent --restrict-file-names=nocontrol $1 
     wget --content-disposition -Nrp --restrict-file-names=nocontrol $1 
 }
 confirm() {

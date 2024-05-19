@@ -1,14 +1,19 @@
 {
-  "workbench.colorTheme": "An Old Hope Classic",
-  "glassit.alpha": 220,
-  "explorer.autoReveal": false,
-  "haskell.manageHLS": "PATH",
-  "git.autofetch": true,
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "explorer.confirmDragAndDrop": false,
-  "editor.formatOnSave": true,
-  "diffEditor.ignoreTrimWhitespace": false,
-  "window.zoomLevel": 1
+	"workbench.colorTheme": "SynthWave '84",
+	"glassit.alpha": 220,
+	"explorer.autoReveal": false,
+	"haskell.manageHLS": "PATH",
+	"git.autofetch": true,
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"explorer.confirmDragAndDrop": false,
+	"editor.formatOnSave": true,
+	"diffEditor.ignoreTrimWhitespace": false,
+	"window.zoomLevel": 1,
+	"explorer.confirmDelete": false,
+	"[cpp]": {
+		"editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+	},
+	"prettier.useTabs": true
 }
