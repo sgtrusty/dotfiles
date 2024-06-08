@@ -281,6 +281,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
         
             -- Common keys with modifiers 
             , ((0,  xK_Print), spawn "flameshot gui")
+            , ((shiftMask,  xK_Print), spawn "flameshot gui -r | tesseract stdin stdout | xclip -sel clip")
         
             -- Tools, utils
             , ((0,  xK_b), spawn "exec ~/.config/xmonad/scripts/bartoggle")
